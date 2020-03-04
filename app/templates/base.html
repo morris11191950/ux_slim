@@ -1,23 +1,41 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>UX - {% block title %}{% endblock %} </title>
+  <title>UX - {% block title %}{% endblock title %} </title>
+
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style2.css') }}">
+
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/global.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/nav.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/homepage.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/authpage.css') }}">
+
 </head>
 
-{% block body %}{% endblock %}
+<nav>
+     <h1> UX - {% block subject %}{% endblock %} </h1>
+     <ul id="nav_list">
+       {% if g.user %}
+          <li><span>{{ g.user['username'] }}</span>
+       {% endif %}
+     <li><a href="{{ url_for('home.homepage') }}">Home</a>
+     {% if g.user %}
+          <li><a href="{{ url_for('auth.logout') }}">Log Out</a>
+     {% else %}
+     <li><a href="{{ url_for('auth.login') }}">Log In</a>
+     {% endif %}
+  </ul>
+</nav>
 
-<section class="content">
+{% block body %}{% endblock body %}
+
+<section class="authcontent">
   <header>
     {% block header %}{% endblock %}
   </header>
-  {% for message in get_flashed_messages() %}
-    <div class="flash">{{ message }}</div>
-  {% endfor %}
-  {% block content %}{% endblock %}
+  {% block authcontent %}{% endblock authcontent%}
 </section>
 
 </html>

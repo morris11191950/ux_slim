@@ -1,0 +1,63 @@
+.authcontent {
+  padding: 0 1rem 1rem;
+}
+
+.authcontent > header {
+  border-bottom: 1px
+  solid lightgray;
+  display: flex;
+  align-items: flex-end;
+}
+
+.authcontent > header h1 {
+  flex: auto;
+  margin: 1rem 0 0.25rem 0;
+}
+
+.authcontent:last-child {
+  margin-bottom: 0;
+}
+
+.authcontent form {
+  margin: 1em 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.authcontent label {
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+
+.authcontent textarea {
+  margin-bottom: 1em;
+}
+
+.authcontent input {
+  background-color: lightgray;
+  border-style: solid;
+  border-color: silver;
+  color: #377ba8;
+  display: inline;
+  font-size: 14pt;
+  margin: 0;
+  margin-bottom: 1em;
+  padding: 0;
+  top: 0;
+  width: 15%;
+}
+
+.authcontent input.danger {
+  color: #cc2f2e;
+}
+
+.authcontent input[type=submit] {
+  align-self:
+  flex-start;
+  width: 15%;
+}
+
+.authcontent textarea {
+  min-height: 12em;
+  resize: vertical;
+}
