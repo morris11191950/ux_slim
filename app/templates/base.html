@@ -17,13 +17,21 @@
 <nav>
      <h1> UX - {% block subject %}{% endblock %} </h1>
      <ul id="nav_list">
+       {% if g.user %}
+          <li><span>{{ g.user['username'] }}</span>
+       {% endif %}
      <li><a href="{{ url_for('home.homepage') }}">Home</a>
      <li><a href="{{ url_for('literature.literature') }}">Literature</a>
      <li><a href="{{ url_for('deposits.deposits_home') }}">Ore Deposits</a>
      <li><a href="{{ url_for('maps.maps_home') }}">Maps</a>
      <li><a href="{{ url_for('trading_post.trading_post') }}">Trading Post</a>
      <li><a href="{{ url_for('prospects.prospects_home') }}">Prospects</a>
+       {% if g.user %}
+          <li><a href="{{ url_for('auth.logout') }}">Log Out</a>
+       {% else %}
      <li><a href="{{ url_for('auth.login') }}">Log In</a>
+     <li><a href="{{ url_for('auth.register') }}">Register</a>
+     {% endif %}
   </ul>
 </nav>
 
