@@ -24,7 +24,8 @@
 }
 
 .homepage_content {
-  font-size: 18pt;
+  font-family: Times, sans-serif;
+  font-size: 16pt;
   margin: 50px;
   position: absolute;
   bottom: 10px;

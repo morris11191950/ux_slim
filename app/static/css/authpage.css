@@ -1,4 +1,10 @@
-.authcontent {
+
+form {
+  max-width: 500px;
+}
+
+
+/* .authcontent {
   padding: 0 1rem 1rem;
 }
 
@@ -10,6 +16,7 @@
 }
 
 .authcontent > header h1 {
+  font-size: 18pt;
   flex: auto;
   margin: 1rem 0 0.25rem 0;
 }
@@ -60,4 +67,4 @@
 .authcontent textarea {
   min-height: 12em;
   resize: vertical;
-}
+} */

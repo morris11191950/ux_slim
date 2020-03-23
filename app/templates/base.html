@@ -1,21 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>UX - {% block title %}{% endblock title %} </title>
-
+  <!-- Required meta tags (Bootstrap) -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/global.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/nav.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/homepage.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/authpage.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/tradingpost.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/prospects.css') }}">
+
+  <title>UX - {% block title %}{% endblock title %} </title>
 
 </head>
 
 <nav>
-     <h1> UX - {% block subject %}{% endblock %} </h1>
+     <h1> UX - {% block subject %}{% endblock subject %} </h1>
      <ul id="nav_list">
        {% if g.user %}
           <li><span>{{ g.user['username'] }}</span>
@@ -26,20 +31,35 @@
      <li><a href="{{ url_for('maps.maps_home') }}">Maps</a>
      <li><a href="{{ url_for('trading_post.trading_post') }}">Trading Post</a>
      <li><a href="{{ url_for('prospects.prospects_home') }}">Prospects</a>
-       {% if g.user %}
+       {% if current_user.is_authenticated %}
           <li><a href="{{ url_for('auth.logout') }}">Log Out</a>
        {% else %}
-     <li><a href="{{ url_for('auth.login') }}">Log In</a>
-     <li><a href="{{ url_for('auth.register') }}">Register</a>
-     {% endif %}
+          <li><a href="{{ url_for('auth.login') }}">Log In</a>
+          <li><a href="{{ url_for('auth.register') }}">Register</a>
+       {% endif %}
   </ul>
 </nav>
 
-{% block body %}{% endblock body %}
+{% block body %}
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+{% endblock body %}
 
 <section class="authcontent">
   <header>
-    {% block header %}{% endblock %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
   </header>
   {% block authcontent %}{% endblock authcontent%}
 </section>
