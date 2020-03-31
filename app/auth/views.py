@@ -30,10 +30,10 @@ def login():
     if form.validate_on_submit():
         usrData = Queries().login_checkUser(username, password)
         if usrData:
-            user = User(usrData[0], usrData[1], usrData[2])
+            user = User(usrData[0], usrData[1], usrData[2], usrData[3])
             login_user(user, remember=userRemember)
             next_page = request.args.get('next')
-            flash('You have been logged in!', 'success')
+            flash('Welcome ' + username + '. You have been logged in!', 'success')
             return redirect(next_page) if next_page else redirect(url_for('home.homepage'))
         else:
             flash('Login unsuccessful. Please check username and password', 'danger')
@@ -43,14 +43,3 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('home.homepage'))
-
-# def login_required(view):
-#     @functools.wraps(view)
-#     def wrapped_view(**kwargs):
-#         if g.user is None:
-#             #g.db_to_use = 'SJM_auth'
-#             return redirect(url_for('auth.login'))
-#
-#         return view(**kwargs)
-#
-#     return wrapped_view

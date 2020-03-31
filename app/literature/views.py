@@ -1,9 +1,10 @@
 from flask import render_template
 from . import literature
-from flask_login import login_required
+from flask_login import login_required, current_user
 
 # THIS MUST BE AT BOTTOM!
 @literature.route('/literature')
 @login_required
 def literature():
+    print('current_user.password_hash ', current_user.password_hash)
     return render_template('literature/literature.html')

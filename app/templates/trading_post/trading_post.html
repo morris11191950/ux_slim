@@ -14,5 +14,10 @@
      <h1>The Trading Post</h1>
      <img src="{{url_for('static', filename='img/JPmine_OreTruck_500x338.jpg')}}" />
      <h2>Jackpile mine, New Mexico</h2>
+     {% if current_user.isAdmin_yn == 'y' %}
+       <p>Congratulations! You are an Admin </p>
+     {% else %}
+       <p>Shame on you - you have no privelages </p>
+     {% endif %}
 </div>
 {% endblock %}

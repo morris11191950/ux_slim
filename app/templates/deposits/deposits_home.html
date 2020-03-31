@@ -10,6 +10,11 @@
 
 {% block body %}
 
-    <p>hi there - ore deposits </p>
+{% if current_user.isAdmin_yn == 'y' %}
+  <p>Congratulations! You are an Admin </p>
+{% else %}
+  <p>Shame on you - you have no privelages </p>
+{% endif %}
+
 
 {% endblock body %}

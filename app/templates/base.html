@@ -22,9 +22,9 @@
 <nav>
      <h1> UX - {% block subject %}{% endblock subject %} </h1>
      <ul id="nav_list">
-       {% if g.user %}
+       <!-- {% if g.user %}
           <li><span>{{ g.user['username'] }}</span>
-       {% endif %}
+       {% endif %} -->
      <li><a href="{{ url_for('home.homepage') }}">Home</a>
      <li><a href="{{ url_for('literature.literature') }}">Literature</a>
      <li><a href="{{ url_for('deposits.deposits_home') }}">Ore Deposits</a>

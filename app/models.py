@@ -6,16 +6,17 @@ from flask_login import UserMixin
 @login_manager.user_loader
 def load_user(user_id):
     userData = Queries().get(user_id)
-    user = User(userData[0], userData[1], userData[2])
+    user = User(userData[0], userData[1], userData[2], userData[3])
     return user
 
 class User(UserMixin):
 
-    def __init__(self, id, username, password_hash, active=True):
+    def __init__(self, id, username, isAdmin_yn, password_hash, active=True):
         self.id = id
         self.username = username
-        self.passwork_hash = password_hash
+        self.password_hash = password_hash
         self.active = active
+        self.isAdmin_yn = isAdmin_yn
 
 class Queries():
     def __init__(self):
@@ -30,13 +31,10 @@ class Queries():
 # GET By ID
 ######################################################################
     def get(self, id):
-        print("getter ")
+        #print("in getter")
         conn = db.connect()
         cursor = conn.cursor()
-
         idstr = str(id)
-        #print("idstr: ", idstr)
-
         sql = "SELECT * FROM user WHERE id = '" + idstr + "' "
         #print("sql: ", sql)
         cursor.execute(sql)
@@ -64,7 +62,7 @@ class Queries():
 # LOGIN_CHECKUSER
 ######################################################################
     def login_checkUser(self, username, password):
-        print("username ", username)
+        #print("username ", username)
         conn = db.connect()
         cursor = conn.cursor()
 
@@ -76,7 +74,7 @@ class Queries():
         if usrData == None:
             return None
 
-        password_hash = usrData[2]
+        password_hash = usrData[3]
         pwCheck = check_password_hash(password_hash, password)
 
         if pwCheck:
