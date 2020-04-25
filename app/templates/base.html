@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <!-- Required meta tags (Bootstrap) -->
+  <title>UX - {% block title %}{% endblock title %} </title>
+
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -14,8 +15,14 @@
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/authpage.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/tradingpost.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/prospects.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/literature_main.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/literature_edit.css') }}">
 
-  <title>UX - {% block title %}{% endblock title %} </title>
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
 
 </head>
 

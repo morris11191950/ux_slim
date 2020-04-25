@@ -10,10 +10,30 @@
 
 {% block body %}
 
-  {% if current_user.isAdmin_yn == 'y' %}
-    <p>Congratulations! You are an Admin </p>
-  {% else %}
-    <p>Shame on you - you have no privelages </p>
-  {% endif %}
+<input type="text" style="display:none" id="refresh" value="no">
+
+<!-- *****************************************************************
+BUTTONS FOR MAIN LITERATURE VIEW
+***************************************************************** -->
+<div id="base2_container">
+     <div id="base2_menu" >
+          <button class="btn" id="button_references_all">All Literature</button>
+          <select class="btn" id="button_districts">
+               <option value="Start">By District</option></select>
+          <select class="btn" id="button_categories">
+               <option value="Start">Categories</option></select>
+          <select class="btn" style="width:200px" id="button_specialCollections">
+               <option value="Start">Special Collections</option></select>
+          <button class="btn2" style="width:50px" id="button_new_ref"><i class="fa fa-plus"></i></button>
+          <!-- <input type="text" name="name" id="base2_search"> -->
+          <div class="search-box">
+            <!-- Type to search -->
+              <input class="search-txt" type="text" name="" placeholder="Up to 3 comma-separated strings, e.g. chinle,uran,utah">
+              <a class="search-btn" href="#">
+              <i class="fas fa-search"></i>
+              </a>
+          </div>
+     </div>
+</div>
 
 {% endblock body %}

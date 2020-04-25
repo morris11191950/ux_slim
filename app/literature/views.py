@@ -6,5 +6,5 @@ from flask_login import login_required, current_user
 @literature.route('/literature')
 @login_required
 def literature():
-    print('current_user.password_hash ', current_user.password_hash)
+    #print('current_user.password_hash ', current_user.password_hash)
     return render_template('literature/literature.html')

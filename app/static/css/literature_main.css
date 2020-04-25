@@ -1,0 +1,114 @@
+
+/* ********************************************************************
+   LITERATURE BUTTONS AND DROPDOWNS
+**********************************************************************/
+#base2_container {background-color: lightgray; position: fixed;
+     width: 100%; top: 33px; left: 0; font-family: helvetica;
+     z-index: 6}
+#base2_container select, input, button {display: inline; font-size: 14pt;
+     margin: 0; padding: 0; top: 0; width: 15%;
+     background-color: lightgray; color: #377ba8; border-style: solid;
+     border-color: silver;}
+
+#base2_menu {display: flex;}
+
+#base2_container button:hover,
+#nav_list a:hover,
+#base2_container select:hover {
+    background-color: #666;
+    color: white;
+}
+
+.btn {
+     font-size: 14pt;
+     font-family: helvetica;
+     width: 15%;
+     background-color: lightgray;
+     color: #377ba8;
+     border-style: solid;
+     border-color: silver;
+     text-align: left;
+}
+
+.btn2 {
+  background-color: lightgray;
+  border: none;
+  color: #377ba8;
+  padding: 12px 16px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.sm_dropbtn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 16px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+
+/* ********************************************************************
+          EXPANDING SEARCH BAR NEW (AWESOME)
+***********************************************************************/
+.search-box{
+  position: absolute;
+  top: 10%;
+  left: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  text-justify: none;
+  transform: translate(-100%, 0%);
+  background: #999999;
+  /* background: #2f3640; */
+  /* height: 45px;
+  width: 17px; */
+  border-radius: 20px;
+  /* padding: 10px; */
+  transition: 0.4s;
+}
+
+.search-box:hover{
+  width: 500px;
+}
+
+.search-box:hover > .search-txt{
+  width: 500px;
+}
+
+/* .search-btn:hover{
+  background: white;
+} */
+
+.search-btn{
+  /* color: #e84118; */
+  color: #ff99aa;
+  /* background: #2f3640; */
+  background: #999999;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* transition: 0.4s; */
+}
+
+.search-txt{
+  border: none;
+  background: none;
+  outline: none;
+  color: white;
+  /* font-size: 16px;
+  line-height: 45px;
+  width: 0px; */
+  transition: 0.4s;
+}
+
+/* ********************************************************************
+          LITERATURE SEARCH
+***********************************************************************/
+.references {position: absolute; top: 20px; background-color: white;
+     line-height: 20px; padding-left: 70px;
+     font-family: sans-serif; font-size: 12pt;}
