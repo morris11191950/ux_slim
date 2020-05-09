@@ -31,10 +31,12 @@ def login():
         usrData = Queries().login_checkUser(username, password)
         if usrData:
             user = User(usrData[0], usrData[1], usrData[2], usrData[3])
+            #print('userRemember ', userRemember)
             login_user(user, remember=userRemember)
             next_page = request.args.get('next')
             flash('Welcome ' + username + '. You have been logged in!', 'success')
             return redirect(next_page) if next_page else redirect(url_for('home.homepage'))
+            #return redirect(next_page) if next_page else redirect(url_for('literature.literature'))
         else:
             flash('Login unsuccessful. Please check username and password', 'danger')
     return render_template('auth/login.html', title='Login', form=form)

@@ -85,7 +85,6 @@ class Queries():
         else:
             return None
 
-
 #######################################################################
 # REGISTER A NEW USER
 ######################################################################
@@ -106,3 +105,116 @@ class Queries():
         conn.close()
 
         return usrData
+
+#######################################################################
+# DISTRICTS ALL
+######################################################################
+    def districts_all(self):
+        json_districts = []
+        conn = db.connect()
+        cursor = conn.cursor()
+        sql = """SELECT district_id, district_name
+        FROM district
+        ORDER BY district_name """
+        cursor.execute(sql)
+        conn.close()
+        rows = cursor.fetchall()
+        #Convert to JSON format
+        for row in rows:
+            json_district = {'district_id': row[0], 'district_name': row[1]}
+            json_districts.append(json_district)
+            json_district = {}
+        return json_districts
+
+#######################################################################
+# CATEGORIES ALL
+######################################################################
+    def categories_all(self):
+        print("In categories_all ")
+        json_categories = []
+        conn = db.connect()
+        cursor = conn.cursor()
+        sql = """SELECT category_id, category_description
+            FROM category
+            ORDER BY category_description"""
+        cursor.execute(sql)
+        conn.close()
+        rows = cursor.fetchall()
+        #Convert to JSON format
+        for row in rows:
+            json_category = {'category_id': row[0], 'category_description': row[1]}
+            json_categories.append(json_category)
+            json_category = {}
+        return json_categories
+
+#######################################################################
+# REFERENCES BY DISTRICT
+######################################################################
+    def references_by_district(self, district_id):
+        print("In Models: references_by_district ")
+        json_refs = []
+        conn = db.connect()
+        cursor = conn.cursor()
+        sql = """SELECT r.reference_id, r.reference, r.filename, r.url
+            FROM reference r
+            INNER JOIN district_to_reference d ON d.reference_id = r.reference_id
+            WHERE d.district_id = %s
+            ORDER BY r.reference """
+        cursor.execute(sql, district_id)
+        conn.close()
+        rows = cursor.fetchall()
+        #Convert to JSON format
+        for row in rows:
+            json_ref = {'reference_id': row[0], 'reference': row[1],
+                'filename': row[2], 'url': row[3]}
+            json_refs.append(json_ref)
+            json_ref = {}
+        return json_refs
+
+#######################################################################
+# REFERENCES BY CATEGORY
+######################################################################
+    def references_by_category(self, category_id):
+        json_refs = []
+        conn = db.connect()
+        cursor = conn.cursor()
+        sql = """SELECT r.reference_id, r.reference, r.filename, r.url
+            FROM reference r
+            INNER JOIN category_to_reference c ON c.reference_id = r.reference_id
+            WHERE c.category_id = %s
+            ORDER BY r.reference """
+        cursor.execute(sql, category_id)
+        conn.close()
+        rows = cursor.fetchall()
+        #Convert to JSON format
+        for row in rows:
+            json_ref = {'reference_id': row[0], 'reference': row[1],
+                'filename': row[2], 'url': row[3]}
+            json_refs.append(json_ref)
+            json_ref = {}
+        return json_refs
+
+#######################################################################
+# REFERENCE DISPLAY PDFS
+######################################################################
+#THEN CONCAT('/static/pdfs/', filename)
+    def url_pdf(self, id):
+        json_refs = []
+        conn = db.connect()
+        cursor = conn.cursor()
+        sql = """SELECT url, filename,
+            CASE
+                WHEN filename IS NOT NULL AND filename != 'None' AND filename != ''
+                    THEN CONCAT('/static/pdfs/', filename)
+                WHEN url IS NOT NULL AND url != 'None' AND url != '' THEN url
+            END AS path
+            FROM reference
+            WHERE reference_id = %s
+                AND ((url IS NOT NULL and url != 'None' and url != '')
+                    OR (filename IS NOT NULL and filename != 'None' and filename != ''))"""
+        cursor.execute(sql, id)
+        row = cursor.fetchone()
+        conn.close()
+        #Convert to JSON format
+        json_ref = {'url': row[2]}
+        return json_ref

@@ -17,9 +17,8 @@ BUTTONS FOR MAIN LITERATURE VIEW
 ***************************************************************** -->
 <div id="base2_container">
      <div id="base2_menu" >
-          <button class="btn" id="button_references_all">All Literature</button>
           <select class="btn" id="button_districts">
-               <option value="Start">By District</option></select>
+               <option value="Start">Districts</option></select>
           <select class="btn" id="button_categories">
                <option value="Start">Categories</option></select>
           <select class="btn" style="width:200px" id="button_specialCollections">
@@ -35,5 +34,203 @@ BUTTONS FOR MAIN LITERATURE VIEW
           </div>
      </div>
 </div>
+
+<!-- *****************************************************************
+ VIEW WHERE SELECTIONS ARE SHOWN
+***************************************************************** -->
+<div>
+     <ol id="literature_selected_display" class="references"></ol>
+</div>
+
+<script>
+
+$(document).ready(function() {
+
+//*************************************************************
+//   INITIALIZE VARS
+//*************************************************************
+var header = document.getElementById("base2_menu");
+var btns = header.getElementsByClassName("btn");
+var $dist_on = "no";
+var $cat_on = "no";
+
+//*************************************************************
+//   TO HIGHLIGHT ACTIVE BUTTOM
+//*************************************************************
+for (var i = 0; i < btns.length; i++) {
+     btns[i].addEventListener("click", function() {
+          var current = document.getElementsByClassName("active");
+          if (current.length != 0) {
+               current[0].className = current[0].className.replace("active", "");
+               };
+          this.className = "active";
+     });
+}
+
+//*************************************************************
+//   BY_DISTRICT BUTTON: ACTIVATES DROPDOWN OF ALL DISTRICTS
+//*************************************************************
+$("#button_districts").click(function() {
+     //$('#references_all_display').hide();
+     if ($dist_on == "no") {
+          $dist_on = "yes";
+          doAjax_districts();
+     }
+});
+
+//*************************************************************
+//   BY_CATEGORY BUTTON: ACTIVATES DROPDOWN OF ALL CATEGORIES
+//*************************************************************
+$("#button_categories").click(function() {
+     //$('#literature_selected_display').hide();
+     if ($cat_on == "no") {
+          $cat_on = "yes";
+          doAjax_categories();
+     }
+});
+
+//*************************************************************
+//   BY_DISTRICT SELECTION
+//*************************************************************
+$("#button_districts").change(function() {
+     var selected_id = $(this).children("option:selected").val();
+     doAjax_references_by_district(selected_id)
+});
+
+//*************************************************************
+//AJAX CALL TO RETRIEVE DISTRICTS AND DISPLAY THEM
+//*************************************************************
+var doAjax_districts = function() {
+
+     $.ajax({
+        type: "GET",
+        url: "http://127.0.0.1:5000/literature/districts_all",
+        success: function(data) {
+             objects = JSON.parse(data.Districts)
+             $.each(objects, function(i, object) {
+                  $temp = "<option " + "value="  + object.district_id + ">"
+                       + object.district_name + '</option>'
+                  $('#button_districts').append($temp);
+             });
+          }
+      });
+ };
+
+ //*************************************************************
+ //AJAX CALL TO RETRIEVE CATEGORIES AND DISPLAY THEM
+ //*************************************************************
+ var doAjax_categories = function() {
+
+      //$("#button_categories").val($("#button_categories option:first").val());
+
+      $.ajax({
+         type: "GET",
+         url: "http://127.0.0.1:5000/literature/categories_all",
+         success: function(data) {
+              objects = JSON.parse(data.Categories)
+              $.each(objects, function(i, object) {
+                   $temp = "<option " + "value="  + object.category_id + ">"
+                        + object.category_description + '</option>'
+                   $('#button_categories').append($temp);
+              });
+           }
+       });
+  };
+
+//*************************************************************
+//AJAX CALL TO RETRIEVE REFERENCES FOR SELECTED DISTRICT,
+// COLOR REFS WITH FILENAME OR PDF BLUE
+// ACTIVATE EDIT BUTTONS
+//*************************************************************
+var doAjax_references_by_district = function(inputValue) {
+
+     $("#wait").show();
+     $('#literature_selected_display').empty()
+
+     $.ajax({
+        type: "GET",
+        url: "http://127.0.0.1:5000/literature/references_by_district/" + inputValue,
+        success: function(data) {
+             $('#references_selected_display').empty();
+             objects = JSON.parse(data.Refs)
+             $('#references_selected_display').show();
+             $.each(objects, function(i, object) {
+                  //console.log("object: ", object);
+                  u = object.url
+                  f = object.filename
+                  r = object.reference + " Ref Id = " + object.reference_id + " "
+                  if (u && u!='None' && u!='') {
+                       $('#literature_selected_display').append(
+                       "<li style='color:blue'><span class='refEditTextHit'>"
+                            + r +
+                       "</span><span class='refEditButton'>[Edit]</span></li>")
+                     } else if (f && f!='None' && f!='') {
+                        $('#literature_selected_display').append(
+                         "<li style='color:blue'><span class='refEditTextHit'>"
+                              + r +
+                         "</span><span class='refEditButton'>[Edit]</span></li>")
+                     } else {
+                        $('#literature_selected_display').append(
+                          "<li style='color:black'><span class='refEditText'>"
+                               + r +
+                          "</span><span class='refEditButton'>[Edit]</span></li>")
+                  }
+             });
+        },
+         complete: function(){
+
+              $("#wait").hide();
+
+              $(".refEditButton").click(function() {
+                   var clickIndex = $(this).parent('li').index()
+                   var refIndex = objects[clickIndex].reference_id;
+                   theUrl = 'http://127.0.0.1:5000/literature/references_edit/' + refIndex
+                   window.open(theUrl, '_self');
+              });
+
+              $(".refEditTextHit").click(function(){
+                   ind = $(this).parent('li').index();
+                   //console.log("ind: ", ind);
+                   id_ref = objects[ind].reference_id;
+                   //console.log("id_ref: ", id_ref);
+                   doAjax_get_url_pdf(id_ref);
+              });
+         }
+      });
+ };
+
+
+//*************************************************************
+//AJAX CALL TO RETRIEVE URL AND DISPLAY SELECTED PDF
+//*************************************************************
+var doAjax_get_url_pdf = function(id_ref) {
+
+     //console.log("Displaying id_ref: ", id_ref);
+     $("#wait").show();
+
+     $.ajax({
+        type: "GET",
+        url: "http://127.0.0.1:5000/literature/url_pdf/" + id_ref,
+        success: function(data) {
+            // $('#references_selected_display').empty();
+             object = JSON.parse(data.Url)
+             //$('#references_selected_display').show();
+             object.url
+        },
+          complete: function(){
+               $("#wait").hide();
+               //doAjax_display_pdf(object.url);
+               console.log("object.url: ", object.url);
+               window.open(object.url);
+         }
+      });
+}
+
+
+
+});
+
+</script>
+
 
 {% endblock body %}
