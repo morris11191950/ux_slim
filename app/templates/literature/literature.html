@@ -4,14 +4,11 @@
      Literature
 {% endblock title %}
 
-{% block subject %}
-     <span id="title1">Literature</span>
-{% endblock subject %}
+{% block nav1 %}
+      - Literature
+{% endblock nav1 %}
 
-{% block body %}
-
-<input type="text" style="display:none" id="refresh" value="no">
-
+{% block nav2 %}
 <!-- *****************************************************************
 BUTTONS FOR MAIN LITERATURE VIEW
 ***************************************************************** -->
@@ -34,6 +31,9 @@ BUTTONS FOR MAIN LITERATURE VIEW
           </div>
      </div>
 </div>
+{% endblock nav2%}
+
+{% block body %}
 
 <!-- *****************************************************************
  VIEW WHERE SELECTIONS ARE SHOWN
@@ -53,6 +53,7 @@ var header = document.getElementById("base2_menu");
 var btns = header.getElementsByClassName("btn");
 var $dist_on = "no";
 var $cat_on = "no";
+var $spCol_on = "no";
 
 //*************************************************************
 //   TO HIGHLIGHT ACTIVE BUTTOM
@@ -90,11 +91,41 @@ $("#button_categories").click(function() {
 });
 
 //*************************************************************
+//   SPECIAL_COLLECTIONS BUTTON:
+//    ACTIVATES DROPDOWN OF SPECIAL_COLLECTIONS
+//*************************************************************
+$("#button_specialCollections").click(function() {
+     $('#references_all_display').hide();
+     if ($spCol_on == "no") {
+          $spCol_on = "yes";
+          doAjax_specialCollections();
+     }
+});
+
+//*************************************************************
 //   BY_DISTRICT SELECTION
 //*************************************************************
 $("#button_districts").change(function() {
      var selected_id = $(this).children("option:selected").val();
      doAjax_references_by_district(selected_id)
+});
+
+//*************************************************************
+//   BY_CATEGORY SELECTION
+//*************************************************************
+$("#button_categories").change(function() {
+     var selected_id = $(this).children("option:selected").val();
+     var selected_txt = $(this).children("option:selected").text();
+     doAjax_references_by_category(selected_id)
+});
+
+//*************************************************************
+//   BY_SPECIALCOLLECTION SELECTION
+//*************************************************************
+$("#button_specialCollections").change(function() {
+     var selected_id = $(this).children("option:selected").val();
+     var selected_txt = $(this).children("option:selected").text();
+     doAjax_references_by_specialCollection(selected_id)
 });
 
 //*************************************************************
@@ -136,6 +167,27 @@ var doAjax_districts = function() {
            }
        });
   };
+
+  //*************************************************************
+  //AJAX CALL TO RETRIEVE SPECIALCOLLECTIONS AND DISPLAY THEM
+  //*************************************************************
+  var doAjax_specialCollections = function() {
+
+       $("#button_specialCollections").val($("#button_specialCollections option:first").val());
+
+       $.ajax({
+          type: "GET",
+          url: "http://127.0.0.1:5000/literature/specialCollections_all",
+          success: function(data) {
+               objects = JSON.parse(data.SpecialCollections)
+               $.each(objects, function(i, object) {
+                    $temp = "<option " + "value="  + object.spcol_id + ">"
+                         + object.spcol_description + '</option>'
+                    $('#button_specialCollections').append($temp);
+               });
+            }
+        });
+   };
 
 //*************************************************************
 //AJAX CALL TO RETRIEVE REFERENCES FOR SELECTED DISTRICT,
@@ -198,6 +250,130 @@ var doAjax_references_by_district = function(inputValue) {
          }
       });
  };
+
+ //*************************************************************
+  //AJAX CALL TO RETRIEVE REFERENCES FOR SELECTED CATEGORY,
+  // COLOR REFS WITH FILENAME OR PDF BLUE
+  // ACTIVATE EDIT BUTTONS
+  //*************************************************************
+  var doAjax_references_by_category = function(inputValue) {
+
+       $("#wait").show();
+       $('#references_all_display').empty()
+       $('#references_selected_display').empty()
+
+       $.ajax({
+          type: "GET",
+          url: "http://127.0.0.1:5000/literature/references_by_category/" + inputValue,
+          success: function(data) {
+               $('#references_selected_display').empty();
+               objects = JSON.parse(data.Refs)
+               // console.log("objects: ", objects);
+               $('#references_selected_display').show();
+               $.each(objects, function(i, object) {
+                    console.log("object: ", object);
+                    u = object.url
+                    f = object.filename
+                    r = object.reference + " Ref Id = " + object.reference_id + " "
+                    if (u && u!='None' && u!='') {
+                         $('#literature_selected_display').append(
+                         "<li style='color:blue'><span class='refEditTextHit'>"
+                              + r +
+                         "</span><span class='refEditButton'>[Edit]</span></li>")
+                       } else if (f && f!='None' && f!='') {
+                          $('#literature_selected_display').append(
+                           "<li style='color:blue'><span class='refEditTextHit'>"
+                                + r +
+                           "</span><span class='refEditButton'>[Edit]</span></li>")
+                       } else {
+                          $('#literature_selected_display').append(
+                            "<li style='color:black'><span class='refEditText'>"
+                                 + r +
+                            "</span><span class='refEditButton'>[Edit]</span></li>")
+                    }
+               });
+          },
+            complete: function(){
+                 $("#wait").hide();
+
+                 $(".refEditButton").click(function() {
+                      var clickIndex = $(this).parent('li').index()
+                      var refIndex = objects[clickIndex].reference_id;
+                      theUrl = 'http://127.0.0.1:5000/literature/references_edit/' + refIndex
+                      window.open(theUrl, '_self');
+                 });
+
+                 $(".refEditTextHit").click(function(){
+                      ind = $(this).parent('li').index();
+                      //console.log("ind: ", ind);
+                      id_ref = objects[ind].reference_id;
+                      //console.log("id_ref: ", id_ref);
+                      doAjax_get_url_pdf(id_ref);
+                 });
+           }
+        });
+   };
+
+   //*************************************************************
+   //AJAX CALL TO RETRIEVE REFERENCES FOR SELECTED SPECIALCOLLECTION,
+   // COLOR REFS WITH FILENAME OR PDF BLUE
+   // ACTIVATE EDIT BUTTONS
+   //*************************************************************
+   var doAjax_references_by_specialCollection = function(inputValue) {
+
+        $("#wait").show();
+        $('#references_all_display').empty()
+        $('#references_selected_display').empty()
+
+        $.ajax({
+           type: "GET",
+           url: "http://127.0.0.1:5000/literature/references_by_specialCollection/" + inputValue,
+           success: function(data) {
+                $('#references_selected_display').empty();
+                objects = JSON.parse(data.Refs)
+                $('#references_selected_display').show();
+                $.each(objects, function(i, object) {
+                     u = object.url
+                     f = object.filename
+                     r = object.reference + " Ref Id = " + object.reference_id + " "
+                     if (u && u!='None' && u!='') {
+                          $('#literature_selected_display').append(
+                          "<li style='color:blue'><span class='refEditTextHit'>"
+                               + r +
+                          "</span><span class='refEditButton'>[Edit]</span></li>")
+                        } else if (f && f!='None' && f!='') {
+                           $('#literature_selected_display').append(
+                            "<li style='color:blue'><span class='refEditTextHit'>"
+                                 + r +
+                            "</span><span class='refEditButton'>[Edit]</span></li>")
+                        } else {
+                           $('#literature_selected_display').append(
+                             "<li style='color:black'><span class='refEditText'>"
+                                  + r +
+                             "</span><span class='refEditButton'>[Edit]</span></li>")
+                     }
+                });
+           },
+             complete: function(){
+                  $("#wait").hide();
+
+                  $(".refEditButton").click(function() {
+                       var clickIndex = $(this).parent('li').index()
+                       var refIndex = objects[clickIndex].reference_id;
+                       theUrl = 'http://127.0.0.1:5000/literature/references_edit/' + refIndex
+                       window.open(theUrl, '_self');
+                  });
+
+                  $(".refEditTextHit").click(function(){
+                       ind = $(this).parent('li').index();
+                       //console.log("ind: ", ind);
+                       id_ref = objects[ind].reference_id;
+                       //console.log("id_ref: ", id_ref);
+                       doAjax_get_url_pdf(id_ref);
+                  });
+            }
+         });
+    };
 
 
 //*************************************************************

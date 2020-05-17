@@ -1,4 +1,6 @@
 
 form {
   max-width: 500px;
+  position:fixed;
+  top:100px;
 }

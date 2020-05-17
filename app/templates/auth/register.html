@@ -4,9 +4,7 @@
      - Register
 {% endblock title %}
 
-{% block subject %}
-     <span id="title_r">Register</span>
-{% endblock subject %}
+
 
 {% block authcontent %}
     <div class="content-section">
@@ -61,8 +59,7 @@
                 </div>
             </fieldset>
             <div class="form-group">
-                <!-- {{ form.submit(class="btn btn-outline-info") }} -->
-                {{ form.submit() }}
+                {{ form.submit(class="form-control btn-secondary") }}
             </div>
         </form>
     </div>

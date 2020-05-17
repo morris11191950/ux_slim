@@ -4,14 +4,17 @@
      Home
 {% endblock title %}
 
-{% block subject %}
+{% block nav1 %}
      Home
-{% endblock %}
+{% endblock nav1%}
+
+{% block nav2 %}
+     <h1>The Grand Junction Center For Uranium Exploration</h1>
+{% endblock nav2%}
 
 {% block body %}
 
 <div class="homepage_container">
-          <h1> The Grand Junction Center For Uranium Exploration </h1>
           <img src="{{url_for('static', filename='img/adits_925x500.jpg')}}" />
           <h4>Photo: Monument 2 Mine, Monument Valley, Arizona</h4>
           <p>Copyright &copy;2020, Stanley Jay Apps. (This site is not affiliated with the U.S. Department of Energy)</p>

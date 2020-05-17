@@ -1,25 +1,16 @@
 
 .homepage_container {
-  position: relative;
-  margin: 0 auto;
-}
-
-.homepage_container h1 {
-  background-color: skyblue;
-  font-size: 24pt;
-  text-align: center;
-  border-radius: 10px;
-  padding: 5px;
+  position:relative;
+  top:100px;
 }
 
 .homepage_container h4 {
-  margin:auto;
   background:lightgray;
   color: #377ba8;
+  padding: 5px 0px 5px 0px;
 }
 
 .homepage_container img {
-  display: block;
   width: 100%;
 }
 
@@ -28,7 +19,7 @@
   font-size: 16pt;
   margin: 50px;
   position: absolute;
-  bottom: 10px;
+  top: 350px;
   color: #f1f1f1;
   width: 90%;
 }

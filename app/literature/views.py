@@ -18,9 +18,17 @@ def categories_all():
     j = jsonify(Categories=jsonStr)
     return j
 
+@literature.route('/literature/specialCollections_all')
+def specialCollections_all():
+    #print('I made it to special collections')
+    rows = Queries().specialCollections_all()
+    jsonStr = json.dumps(rows)
+    j = jsonify(SpecialCollections=jsonStr)
+    return j
+
 @literature.route('/literature/references_by_district/<int:district_id>')
 def references_by_district(district_id):
-    print('Views - References by district ', district_id)
+    #print('Views - References by district ', district_id)
     rows = Queries().references_by_district(district_id)
     jsonStr = json.dumps(rows)
     j = jsonify(Refs=jsonStr)
@@ -28,11 +36,34 @@ def references_by_district(district_id):
 
 @literature.route('/literature/references_by_category/<int:category_id>')
 def references_by_category(category_id):
+    #print('In literature views: references by category ')
     rows = Queries().references_by_category(category_id)
+    #print('In literature views: references by category ', rows)
     jsonStr = json.dumps(rows)
     j = jsonify(Refs=jsonStr)
     return j
 
+@literature.route('/literature/references_by_specialCollection/<int:spcol_id>')
+def references_by_specialCollection(spcol_id):
+    #print('Views:references_by_specialCollection spcol_id', spcol_id)
+    rows = Queries().references_by_specialCollection(spcol_id)
+    jsonStr = json.dumps(rows)
+    j = jsonify(Refs=jsonStr)
+    return j
+
+##########################################################################
+##########################################################################
+# LITERATURE EDITS
+##########################################################################
+##########################################################################
+
+
+
+##########################################################################
+##########################################################################
+# LITERATURE PDFs
+##########################################################################
+##########################################################################
 @literature.route('/literature/url_pdf/<id>')
 def url_pdf(id):
     row = Queries().url_pdf(id)

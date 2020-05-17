@@ -4,9 +4,6 @@
      - Login
 {% endblock title %}
 
-{% block subject %}
-     <span id="title_r">Login</span>
-{% endblock subject %}
 
 {% block authcontent %}
     <div class="content-section">
@@ -50,7 +47,8 @@
                 </div>
             </fieldset>
             <div class="form-group">
-                {{ form.submit(class="btn btn-outline-info") }}
+                <!-- <button type="submit" class="btn btn-primary">Submit</button> -->
+                {{ form.submit(class="form-control btn-secondary") }}
             </div>
             <small class="text-muted ml-2">
                 <a href="#">Forgot Password? (not yet functional)</a>

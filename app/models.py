@@ -148,6 +148,25 @@ class Queries():
         return json_categories
 
 #######################################################################
+# SPECIAL COLLECTIONS ALL
+######################################################################
+    def specialCollections_all(self):
+        json_specialCollections = []
+        cursor = self.conn.cursor()
+        sql = """SELECT spcol_id, spcol_description
+            FROM special_collection
+            ORDER BY spcol_description"""
+        cursor.execute(sql)
+        self.conn.close()
+        rows = cursor.fetchall()
+        #Convert to JSON format
+        for row in rows:
+            json_specialCollection = {'spcol_id': row[0], 'spcol_description': row[1]}
+            json_specialCollections.append(json_specialCollection)
+            json_specialCollection = {}
+        return json_specialCollections
+
+#######################################################################
 # REFERENCES BY DISTRICT
 ######################################################################
     def references_by_district(self, district_id):
@@ -194,6 +213,29 @@ class Queries():
             json_ref = {}
         return json_refs
 
+#######################################################################
+# REFERENCES BY SPECIALCOLLECTION
+######################################################################
+    def references_by_specialCollection(self, spcol_id):
+        json_refs = []
+        cursor = self.conn.cursor()
+        sql = """SELECT r.reference_id, r.reference, r.filename, r.url
+            FROM reference r
+            INNER JOIN specialcollection_to_reference sc
+                ON sc.reference_id = r.reference_id
+            WHERE sc.spcol_id = %s
+            ORDER BY r.reference """
+        cursor.execute(sql, spcol_id)
+        self.conn.close()
+        rows = cursor.fetchall()
+        #Convert to JSON format
+        for row in rows:
+            json_ref = {'reference_id': row[0], 'reference': row[1],
+                'filename': row[2], 'url': row[3]}
+            json_refs.append(json_ref)
+            json_ref = {}
+        return json_refs
+        
 #######################################################################
 # REFERENCE DISPLAY PDFS
 ######################################################################
