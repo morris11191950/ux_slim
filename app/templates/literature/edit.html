@@ -1,0 +1,402 @@
+{% extends 'base.html' %}
+
+{% block title %}
+     - Edit Reference
+{% endblock %}
+
+{% block subject %}
+     Edit Literature
+{% endblock %}
+
+{% block body %}
+
+<p hidden id="dummy" >{{refid}}</p>
+
+<div class="form">
+     <div class="form-heading">Make Edits</div>
+     <p>Reference Id = {{refid}}</p>
+     <form action="" name="myform" method="post">
+          <label>
+               <span>Reference</span>
+               <textarea name="reference" class="large-field"></textarea>
+          </label>
+          <label>
+               <span>Source </span>
+               <input name="source" type="text" class="small-field"/>
+          </label>
+          <label>
+               <span>Filename</span>
+               <input name="filename" type="text" class="small-field"/>
+          </label>
+          <label>
+               <span>URL</span>
+               <input name="url" id="ur" type="text" class="small-field"/>
+          </label>
+
+     	<div class="edit_selects">
+     		<label>
+     			<span>Districts</span>
+     	          <select name="districts_dropdown"
+                         id="districts_dropdown" class="select-dropdown">
+                         <option value="Start">--By District--</option>
+     	          </select>
+     	     </label><br>
+           <span id="list-districts">
+              <ul id="districts_former" contenteditable="true"></ul>
+           </span>
+     	</div>
+
+     	<div class="edit_selects">
+     		<label>
+     			<span>Categories</span>
+     	          <select name="categories_dropdown"
+                         id="categories_dropdown" class="select-dropdown">
+                         <option value="Start">--By Category--</option>
+     	          </select>
+     	     </label><br>
+               <span id="list-categories">
+                    <ul id="categories_former" contenteditable="true"> </ul>
+               </span>
+     	</div>
+
+      <div class="edit_selects">
+        <label>
+          <span>Special Collections</span>
+                <select name="specials_dropdown"
+                         id="specials_dropdown"
+                         class="select-dropdown">
+                         <option value="Start">--By Specials--</option>
+                </select>
+           </label><br>
+               <span id="list-specials">
+                    <ul id="specials_former" contenteditable="true"> </ul>
+               </span>
+      </div>
+
+      <span>Verified?</span>
+      <span>Yes <input type="radio" name="yn" value="yes"/> </span>
+      <span>No <input type="radio" name="yn" value="no"/></span>
+
+      <br><br><br>
+
+     	<div class="edit_buttons">
+     		<button id="save">Save</button>
+     		<button onclick="cancelFunction()">Cancel</button>
+        <button id="new">New Reference</button>
+     		<button  type="button" id="delete">Delete Reference</button>
+     	</div>
+
+     </form>
+
+</div>
+
+<script>
+
+//*************************************************************
+//  CANCEL BUTTON FUNCTION
+//*************************************************************
+function cancelFunction() {
+    console.log("About to cancel");
+    location.reload(true);
+};
+
+//*************************************************************
+//  NEW REFERENCE BUTTON FUNCTION
+//*************************************************************
+$(document).ready(function() {
+var $refid = $("#dummy").text();
+var category_ids = [];
+var district_ids = [];
+var special_ids = [];
+//var $myurl = "http://127.0.0.1:5000/"
+//var $myurl = "http://0.0.0.0:5000/"
+var $myurl = "http://10.0.1.29:5000/"
+
+//*************************************************************
+//  save BUTTON FUNCTIONS
+//*************************************************************
+$("#save").click(function() {
+     doAjax_save();
+});
+
+//*************************************************************
+//  NEW REFERENCE BUTTON FUNCTIONS
+//*************************************************************
+$("#new").click(function() {
+     doAjax_new();
+     window.open($myurl+"literature/references_edit/0");
+});
+
+//*************************************************************
+//  DELETE BUTTON FUNCTIONS
+//*************************************************************
+$("#delete").click(function() {
+    console.log("About to delete");
+    alert("Delete button currently inactive")
+    //doAjax_delete();
+});
+
+//*************************************************************
+//   DISTRICT SELECTION FROM DROPDOWN
+//*************************************************************
+$("#districts_dropdown").change(function() {
+     //console.log("edit.html districts_dropdown: ");
+     var selected_id = $(this).children("option:selected").val();
+     var selected_district = $(this).children("option:selected").text();
+     district_ids.push(selected_id)
+     $temp = "<li>" + selected_district +
+          "</span><span class='editDistrictDeleteButton'>    [Delete]</span></li>";
+     $('#districts_former').append($temp);
+});
+
+//*************************************************************
+//   CATEGORY SELECTION FROM DROPDOWN
+//*************************************************************
+$("#categories_dropdown").change(function() {
+     var selected_id = $(this).children("option:selected").val();
+     var selected_category = $(this).children("option:selected").text();
+     category_ids.push(selected_id)
+     $temp = "<li>" + selected_category +
+          "</span><span class='editCategoryDeleteButton'>    [Delete]</span></li>";
+     $('#categories_former').append($temp);
+});
+
+//*************************************************************
+//   SPECIAL COLLECTIONS SELECTION FROM DROPDOWN
+//*************************************************************
+$("#specials_dropdown").change(function() {
+     var selected_id = $(this).children("option:selected").val();
+     var selected_special = $(this).children("option:selected").text();
+     special_ids.push(selected_id)
+     //console.log("In special - change ");
+     $temp = "<li>" + selected_special +
+          "</span><span class='editSpecialDeleteButton'>    [Delete]</span></li>";
+     $('#specials_former').append($temp);
+});
+
+//*************************************************************
+//AJAX CALL TO LOAD MAIN FIELDS
+//*************************************************************
+//console.log("Load fields ", $refid);
+     $.ajax({
+        type: "GET",
+        url: $myurl+"literature/edit/references_edit_load/" + $refid,
+        success: function(data) {
+            objects = JSON.parse(data.Load);
+            $.each(objects, function(i, object) {
+                 $('textarea[name=reference]').val(object.reference);
+                 $('input[name=url]').val(object.url);
+                 $('input[name=filename]').val(object.filename);
+                 $('input[name=source]').val(object.source);
+                 if (object.verified=='y') {
+                      $('input:radio[name="yn"]').filter('[value="yes"]').
+                         attr('checked', true);
+                      } else {
+                      $('input:radio[name="yn"]').filter('[value="no"]').
+                         attr('checked', true);
+                   }
+            });
+        }
+    });
+
+//*************************************************************
+//AJAX CALL TO LOAD DISTRICTS TO DROPDOWN
+//*************************************************************
+      $.ajax({
+         type: "GET",
+         url: $myurl+"literature/districts_all",
+         success: function(data) {
+              objects = JSON.parse(data.Districts)
+              $.each(objects, function(i, object) {
+                   $temp = "<option " + "value="  + object.district_id + ">"
+                        + object.district_name + '</option>'
+                   $('#districts_dropdown').append($temp);
+              });
+            }
+        });
+
+//*************************************************************
+//AJAX CALL TO LOAD CATEGORIES TO DROPDOWN
+//*************************************************************
+      $.ajax({
+         type: "GET",
+         url: $myurl+"literature/categories_all",
+         success: function(data) {
+              objects = JSON.parse(data.Categories)
+              $.each(objects, function(i, object) {
+                   $temp = "<option " + "value="  + object.category_id + ">"
+                        + object.category_description + '</option>'
+                   $('#categories_dropdown').append($temp);
+              });
+            }
+        });
+
+//*************************************************************
+//AJAX CALL TO LOAD SPECIAL COLLECTIONS TO DROPDOWN
+//*************************************************************
+      $.ajax({
+          type: "GET",
+          url: $myurl+"literature/specialCollections_all",
+          success: function(data) {
+              objects = JSON.parse(data.SpecialCollections)
+              $.each(objects, function(i, object) {
+                  $temp = "<option " + "value="  + object.spcol_id + ">"
+                        + object.spcol_description + '</option>'
+                    $('#specials_dropdown').append($temp);
+              });
+            }
+        });
+
+//*************************************************************
+//AJAX CALL TO LOAD DISTRICTS FOR SELECTED REFERENCE
+//*************************************************************
+    $.ajax({
+       type: "GET",
+       url: $myurl+"literature/edit/references_edit_load_districts/" + $refid,
+       success: function(data) {
+           objects = JSON.parse(data.Load);
+           $.each(objects, function(i, object) {
+                $temp = "<li>" + object.district_name +
+                     "</span><span class='editDistrictDeleteButton'>    [Delete]</span></li>";
+                var district_id = (object.district_id).toString()
+                district_ids.push(district_id)
+                $('#districts_former').append($temp);
+           });
+           $(".editDistrictDeleteButton").click(function() {
+                var clickIndex = $(this).parent('li').index();
+                var x = $(this).parent('li');
+                district_ids.splice(clickIndex, 1)
+                x.remove(x.clickIndex);
+           });
+       }
+   });
+
+//*************************************************************
+//AJAX CALL TO LOAD CATEGORIES FOR SELECTED REFERENCE
+//*************************************************************
+  $.ajax({
+     type: "GET",
+     url: $myurl+"literature/edit/references_edit_load_categories/" + $refid,
+     success: function(data) {
+         objects = JSON.parse(data.Load);
+         $.each(objects, function(i, object) {
+              $temp = "<li>" + object.category_description +
+                   "</span><span class='editCategoryDeleteButton'>    [Delete]</span></li>";
+              var category_id = (object.category_id).toString()
+              category_ids.push(category_id)
+              $('#categories_former').append($temp);
+         });
+         $(".editCategoryDeleteButton").click(function() {
+              var clickIndex = $(this).parent('li').index();
+              var x = $(this).parent('li');
+              category_ids.splice(clickIndex, 1)
+              x.remove(x.clickIndex);
+         });
+     }
+ });
+
+ //*************************************************************
+ //AJAX CALL TO LOAD SPECIALS FOR SELECTED REFERENCE
+ //*************************************************************
+   $.ajax({
+      type: "GET",
+      url: $myurl+"literature/edit/references_edit_load_specials/" + $refid,
+      success: function(data) {
+          objects = JSON.parse(data.Load);
+          $.each(objects, function(i, object) {
+               $temp = "<li>" + object.special_description +
+                    "</span><span class='editSpecialDeleteButton'>    [Delete]</span></li>";
+               var special_id = (object.special_id).toString()
+               special_ids.push(special_id)
+               $('#specials_former').append($temp);
+          });
+          $(".editSpecialDeleteButton").click(function() {
+               var clickIndex = $(this).parent('li').index();
+               var x = $(this).parent('li');
+               special_ids.splice(clickIndex, 1)
+               x.remove(x.clickIndex);
+          });
+      }
+  });
+
+  //*************************************************************
+  //NEW REFERENCE
+  //*************************************************************
+  var doAjax_new = function() {
+    $.ajax({
+       type: "GET",
+       url: $myurl+"literature/edit/references_edit/0",
+     });
+   };
+
+  //*************************************************************
+  // SAVE THE EDITS
+  //*************************************************************
+  var doAjax_save = function() {
+       console.log("edit.html refid ", $refid)
+       var data = {};
+       data['refid'] = $refid;
+       data['reference'] = $("textarea[name='reference']").val();
+       data['filename'] = $("input[name='filename']").val();
+       data['source'] = $("input[name='source']").val();
+       data['url'] = $("input[name='url']").val();
+       data['yn'] = $("input[name='yn']:checked").val();
+       data['district_ids'] = district_ids;
+       data['category_ids'] = category_ids;
+       data['special_ids'] = special_ids;
+       if (data['yn'] == undefined) {
+            data['yn'] = 'no';
+       }
+       if ($refid == 0) {
+            //data['yn'] = 'no';
+            $.ajax({
+              type: "POST",
+              contentType: 'application/json;charset=UTF-8',
+              url: $myurl+"literature/edit/references_new",
+              data: JSON.stringify(data),
+              success: function(refid_new) {
+                   $refid = refid_new;
+                   alert("New reference was added successfully")
+                   }
+              });
+            } else {
+            $.ajax({
+              type: "POST",
+              //contentType: 'application/json;charset=UTF-8',
+              url: $myurl+"literature/edit/references_edit_save",
+              dataType: "text",
+              data: JSON.stringify(data),
+              complete: function() {
+                   //alert("I am here3")
+                   //console.log("edit.html hi ")
+                    //Add the following alert in final
+                    alert("Reference was updated")
+                    }
+              });
+         };
+       };
+
+//*************************************************************
+// DELETE THE CURRENT REFERENCE
+//*************************************************************
+      var doAjax_delete = function() {
+           var data = {};
+           data['refid'] = $refid;
+           //console.log("doAjax_delete, refid ", $refid)
+           $.ajax({
+             type: "POST",
+             contentType: 'application/json;charset=UTF-8',
+             url: $myurl+"literature/edit/references_delete",
+             data: JSON.stringify(data),
+             success: function() {
+                  //Add the following alert in final
+                  alert("Reference was deleted")
+                  location.reload(true);
+                  }
+             });
+      };
+  });
+
+  </script>
+
+{% endblock %}

@@ -54,6 +54,30 @@ var btns = header.getElementsByClassName("btn");
 var $dist_on = "no";
 var $cat_on = "no";
 var $spCol_on = "no";
+//var $myurl = "http://127.0.0.1:5000/"
+//var $myurl = "http://0.0.0.0:5000/"
+var $myurl = "http://10.0.1.29:5000/"
+
+//*************************************************************
+//   CLICK ON SEARCH
+//*************************************************************
+$("input").on("keydown",function search(e) {
+    if(e.keyCode == 13) {
+        usrFrag = $(this).val()
+        //console.log("usrFrag: ", usrFrag);
+        doAjax_references_search(usrFrag);
+    }
+});
+
+//*************************************************************
+//   CLICK NEW REFERENCE
+//*************************************************************
+$("#button_new_ref").click(function() {
+     doAjax_new();
+     window.open($myurl+"/literature/references_edit/0");
+     //window.open('http://0.0.0.0:5000/literature/references_edit/0');
+     //window.open('http://10.0.1.29:5000/literature/references_edit/0');
+});
 
 //*************************************************************
 //   TO HIGHLIGHT ACTIVE BUTTOM
@@ -83,6 +107,7 @@ $("#button_districts").click(function() {
 //   BY_CATEGORY BUTTON: ACTIVATES DROPDOWN OF ALL CATEGORIES
 //*************************************************************
 $("#button_categories").click(function() {
+     //console.log("Special Categories ");
      //$('#literature_selected_display').hide();
      if ($cat_on == "no") {
           $cat_on = "yes";
@@ -135,7 +160,10 @@ var doAjax_districts = function() {
 
      $.ajax({
         type: "GET",
-        url: "http://127.0.0.1:5000/literature/districts_all",
+        //url: "http://127.0.0.1:5000/literature/districts_all",
+        //url: "http://0.0.0.0:5000/literature/districts_all",
+        //url: "http://10.0.1.29:5000/literature/districts_all",
+        url: $myurl+"literature/districts_all",
         success: function(data) {
              objects = JSON.parse(data.Districts)
              $.each(objects, function(i, object) {
@@ -156,7 +184,10 @@ var doAjax_districts = function() {
 
       $.ajax({
          type: "GET",
-         url: "http://127.0.0.1:5000/literature/categories_all",
+         url: $myurl+"literature/categories_all",
+         //url: "http://0.0.0.0:5000/literature/categories_all",
+         //url: "http://10.0.1.29:5000/literature/categories_all",
+         //url: myurl,
          success: function(data) {
               objects = JSON.parse(data.Categories)
               $.each(objects, function(i, object) {
@@ -177,7 +208,9 @@ var doAjax_districts = function() {
 
        $.ajax({
           type: "GET",
-          url: "http://127.0.0.1:5000/literature/specialCollections_all",
+          url: $myurl+"literature/specialCollections_all",
+          //url: "http://0.0.0.0:5000/literature/specialCollections_all",
+          //url: "http://10.0.1.29:5000/literature/specialCollections_all",
           success: function(data) {
                objects = JSON.parse(data.SpecialCollections)
                $.each(objects, function(i, object) {
@@ -188,6 +221,74 @@ var doAjax_districts = function() {
             }
         });
    };
+
+   //*************************************************************
+   //AJAX CALL TO SEARCH FOR USR INPUT
+   // Color the pdf and url refs blue
+   //*************************************************************
+   var doAjax_references_search = function(usrFrag) {
+
+      //  console.log("In ajax - usrFrag", usrFrag);
+
+        $("#wait").show();
+        $('#references_all_display').empty()
+        $('#literature_selected_display').empty()
+
+        $.ajax({
+           type: "GET",
+           url: $myurl+"literature/references_search/" + usrFrag,
+           //url: "http://0.0.0.0:5000/literature/references_search/" + usrFrag,
+           //url: "http://10.0.1.29:5000/literature/references_search/" + usrFrag,
+           success: function(data) {
+                $('#literature_selected_display').empty();
+                objects = JSON.parse(data.Refs)
+                $('#literature_selected_display').show();
+                $.each(objects, function(i, object) {
+                    //console.log("In ajax - usrFrag: object", object);
+                     u = object.url
+                     f = object.filename
+                     r = object.reference + " Ref Id = " + object.reference_id + " "
+                     if (u && u!='None' && u!='') {
+                          $('#literature_selected_display').append(
+                          "<li style='color:blue'><span class='refEditTextHit'>"
+                               + r +
+                          "</span><span class='refEditButton'>[Edit]</span></li>")
+                        } else if (f && f!='None' && f!='') {
+                           $('#literature_selected_display').append(
+                            "<li style='color:blue'><span class='refEditTextHit'>"
+                                 + r +
+                            "</span><span class='refEditButton'>[Edit]</span></li>")
+                        } else {
+                           $('#literature_selected_display').append(
+                             "<li style='color:black'><span class='refEditText'>"
+                                  + r +
+                             "</span><span class='refEditButton'>[Edit]</span></li>")
+                     }
+                });
+           },
+            complete: function(){
+                 $("#wait").hide();
+
+                 $(".refEditButton").click(function() {
+                      var clickIndex = $(this).parent('li').index()
+                      var refIndex = objects[clickIndex].reference_id;
+                      theUrl = $myurl+"literature/references_edit/" + refIndex
+                      //theUrl = 'http://0.0.0.0:5000/literature/references_edit/' + refIndex
+                      //theUrl = 'http://10.0.1.29:5000/literature/references_edit/' + refIndex
+                      window.open(theUrl, '_self');
+                 });
+
+                 $(".refEditTextHit").click(function(){
+                      ind = $(this).parent('li').index();
+                      //console.log("ind: ", ind);
+                      id_ref = objects[ind].reference_id;
+                      //console.log("id_ref: ", id_ref);
+                      doAjax_get_url_pdf(id_ref);
+                 });
+
+            }
+         });
+    };
 
 //*************************************************************
 //AJAX CALL TO RETRIEVE REFERENCES FOR SELECTED DISTRICT,
@@ -201,11 +302,13 @@ var doAjax_references_by_district = function(inputValue) {
 
      $.ajax({
         type: "GET",
-        url: "http://127.0.0.1:5000/literature/references_by_district/" + inputValue,
+        url: $myurl+"literature/references_by_district/" + inputValue,
+        //url: "http://0.0.0.0:5000/literature/references_by_district/" + inputValue,
+        //url: "http://10.0.1.29:5000/literature/references_by_district/" + inputValue,
         success: function(data) {
-             $('#references_selected_display').empty();
+             $('#literature_selected_display').empty();
              objects = JSON.parse(data.Refs)
-             $('#references_selected_display').show();
+             $('#literature_selected_display').show();
              $.each(objects, function(i, object) {
                   //console.log("object: ", object);
                   u = object.url
@@ -237,6 +340,8 @@ var doAjax_references_by_district = function(inputValue) {
                    var clickIndex = $(this).parent('li').index()
                    var refIndex = objects[clickIndex].reference_id;
                    theUrl = 'http://127.0.0.1:5000/literature/references_edit/' + refIndex
+                   //theUrl = 'http://0.0.0.0:5000/literature/references_edit/' + refIndex
+                   //theUrl = 'http://10.0.1.29:5000/literature/references_edit/' + refIndex
                    window.open(theUrl, '_self');
               });
 
@@ -260,18 +365,20 @@ var doAjax_references_by_district = function(inputValue) {
 
        $("#wait").show();
        $('#references_all_display').empty()
-       $('#references_selected_display').empty()
+       $('#literature_selected_display').empty()
 
        $.ajax({
           type: "GET",
-          url: "http://127.0.0.1:5000/literature/references_by_category/" + inputValue,
+          url: $myurl+"literature/references_by_category/" + inputValue,
+          //url: "http://0.0.0.0:5000/literature/references_by_category/" + inputValue,
+          //url: "http://10.0.1.29:5000/literature/references_by_category/" + inputValue,
           success: function(data) {
-               $('#references_selected_display').empty();
+               $('#literature_selected_display').empty();
                objects = JSON.parse(data.Refs)
                // console.log("objects: ", objects);
-               $('#references_selected_display').show();
+               $('#literature_selected_display').show();
                $.each(objects, function(i, object) {
-                    console.log("object: ", object);
+                    //console.log("object: ", object);
                     u = object.url
                     f = object.filename
                     r = object.reference + " Ref Id = " + object.reference_id + " "
@@ -299,7 +406,9 @@ var doAjax_references_by_district = function(inputValue) {
                  $(".refEditButton").click(function() {
                       var clickIndex = $(this).parent('li').index()
                       var refIndex = objects[clickIndex].reference_id;
-                      theUrl = 'http://127.0.0.1:5000/literature/references_edit/' + refIndex
+                      theUrl = $myurl+"literature/references_edit/" + refIndex
+                      //theUrl = 'http://0.0.0.0:5000/literature/references_edit/' + refIndex
+                      //theUrl = 'http://10.0.1.29:5000/literature/references_edit/' + refIndex
                       window.open(theUrl, '_self');
                  });
 
@@ -323,15 +432,17 @@ var doAjax_references_by_district = function(inputValue) {
 
         $("#wait").show();
         $('#references_all_display').empty()
-        $('#references_selected_display').empty()
+        $('#literature_selected_display').empty()
 
         $.ajax({
            type: "GET",
-           url: "http://127.0.0.1:5000/literature/references_by_specialCollection/" + inputValue,
+           url: $myurl+"literature/references_by_specialCollection/" + inputValue,
+           //url: "http://0.0.0.0:5000/literature/references_by_specialCollection/" + inputValue,
+           //url: "http://10.0.1.29:5000/literature/references_by_specialCollection/" + inputValue,
            success: function(data) {
-                $('#references_selected_display').empty();
+                $('#literature_selected_display').empty();
                 objects = JSON.parse(data.Refs)
-                $('#references_selected_display').show();
+                $('#literature_selected_display').show();
                 $.each(objects, function(i, object) {
                      u = object.url
                      f = object.filename
@@ -360,7 +471,8 @@ var doAjax_references_by_district = function(inputValue) {
                   $(".refEditButton").click(function() {
                        var clickIndex = $(this).parent('li').index()
                        var refIndex = objects[clickIndex].reference_id;
-                       theUrl = 'http://127.0.0.1:5000/literature/references_edit/' + refIndex
+                       theUrl = $myurl+"literature/references_edit/" + refIndex
+                       //theUrl = 'http://10.0.1.29:5000/literature/references_edit/' + refIndex
                        window.open(theUrl, '_self');
                   });
 
@@ -375,6 +487,17 @@ var doAjax_references_by_district = function(inputValue) {
          });
     };
 
+//*************************************************************
+ //NEW REFERENCE
+ //*************************************************************
+ var doAjax_new = function() {
+   $.ajax({
+      type: "GET",
+      url: $myurl+"literature/edit/references_edit/0",
+      //url: "http://0.0.0.0:5000/literature/edit/references_edit/0",
+      //url: "http://10.0.1.29:5000/literature/edit/references_edit/0",
+    });
+  };
 
 //*************************************************************
 //AJAX CALL TO RETRIEVE URL AND DISPLAY SELECTED PDF
@@ -386,17 +509,19 @@ var doAjax_get_url_pdf = function(id_ref) {
 
      $.ajax({
         type: "GET",
-        url: "http://127.0.0.1:5000/literature/url_pdf/" + id_ref,
+        url: $myurl+"literature/url_pdf/" + id_ref,
+        //url: "http://0.0.0.0:5000/literature/url_pdf/" + id_ref,
+        //url: "http://10.0.1.29:5000/literature/url_pdf/" + id_ref,
         success: function(data) {
-            // $('#references_selected_display').empty();
+            // $('#literature_selected_display').empty();
              object = JSON.parse(data.Url)
-             //$('#references_selected_display').show();
+             //$('#literature_selected_display').show();
              object.url
         },
           complete: function(){
                $("#wait").hide();
                //doAjax_display_pdf(object.url);
-               console.log("object.url: ", object.url);
+               //console.log("object.url: ", object.url);
                window.open(object.url);
          }
       });

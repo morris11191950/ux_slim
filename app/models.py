@@ -32,14 +32,13 @@ class Queries():
 ######################################################################
     def get(self, id):
         #print("in getter")
-        conn = db.connect()
-        cursor = conn.cursor()
+        cursor = self.conn.cursor()
         idstr = str(id)
         sql = "SELECT * FROM user WHERE id = '" + idstr + "' "
         #print("sql: ", sql)
         cursor.execute(sql)
         userData = cursor.fetchone()
-        conn.close()
+        self.conn.close()
 
         return userData
 
@@ -48,13 +47,12 @@ class Queries():
 ######################################################################
     def register_checkUser(self, username):
         #print("username ", username)
-        conn = db.connect()
-        cursor = conn.cursor()
+        cursor = self.conn.cursor()
 
         sql = "SELECT * FROM user WHERE username = '" + username + "' "
         cursor.execute(sql)
         usrData = cursor.fetchone()
-        conn.close()
+        self.conn.close()
 
         return usrData
 
@@ -62,14 +60,13 @@ class Queries():
 # LOGIN_CHECKUSER
 ######################################################################
     def login_checkUser(self, username, password):
-        #print("username ", username)
-        conn = db.connect()
-        cursor = conn.cursor()
+        print("username ", username)
+        cursor = self.conn.cursor()
 
         sql = "SELECT * FROM user WHERE username = '" + username + "' "
         cursor.execute(sql)
         usrData = cursor.fetchone()
-        conn.close()
+        self.conn.close()
 
         if usrData == None:
             return None
@@ -91,18 +88,17 @@ class Queries():
     def register(self, username, password):
         #print("username ", username)
         #print("password ", password)
-        conn = db.connect()
-        cursor = conn.cursor()
+        cursor = self.conn.cursor()
         pwh = generate_password_hash(password)
         s = "('" + username + "', '" + pwh + "')"
         sql = "INSERT INTO user (username, password_hash) VALUES " + s
         cursor.execute(sql)
-        conn.commit()
+        self.conn.commit()
 
         sql = "SELECT * FROM user WHERE username = '" + username + "' "
         cursor.execute(sql)
         usrData = cursor.fetchone()
-        conn.close()
+        self.conn.close()
 
         return usrData
 
@@ -110,15 +106,16 @@ class Queries():
 # DISTRICTS ALL
 ######################################################################
     def districts_all(self):
+        #print("In models -> districtsAll ")
         json_districts = []
-        conn = db.connect()
-        cursor = conn.cursor()
+        cursor = self.conn.cursor()
         sql = """SELECT district_id, district_name
         FROM district
         ORDER BY district_name """
         cursor.execute(sql)
-        conn.close()
+        self.conn.close()
         rows = cursor.fetchall()
+        #print("In models -> districtsAll- rows ", rows)
         #Convert to JSON format
         for row in rows:
             json_district = {'district_id': row[0], 'district_name': row[1]}
@@ -130,15 +127,14 @@ class Queries():
 # CATEGORIES ALL
 ######################################################################
     def categories_all(self):
-        print("In categories_all ")
+        #print("In categories_all ")
         json_categories = []
-        conn = db.connect()
-        cursor = conn.cursor()
+        cursor = self.conn.cursor()
         sql = """SELECT category_id, category_description
             FROM category
             ORDER BY category_description"""
         cursor.execute(sql)
-        conn.close()
+        self.conn.close()
         rows = cursor.fetchall()
         #Convert to JSON format
         for row in rows:
@@ -151,6 +147,7 @@ class Queries():
 # SPECIAL COLLECTIONS ALL
 ######################################################################
     def specialCollections_all(self):
+        #print("In models -> specialCollections ")
         json_specialCollections = []
         cursor = self.conn.cursor()
         sql = """SELECT spcol_id, spcol_description
@@ -170,19 +167,19 @@ class Queries():
 # REFERENCES BY DISTRICT
 ######################################################################
     def references_by_district(self, district_id):
-        print("In Models: references_by_district ")
+        #print("In Models: references_by_district ")
         json_refs = []
-        conn = db.connect()
-        cursor = conn.cursor()
+        cursor = self.conn.cursor()
         sql = """SELECT r.reference_id, r.reference, r.filename, r.url
             FROM reference r
             INNER JOIN district_to_reference d ON d.reference_id = r.reference_id
             WHERE d.district_id = %s
             ORDER BY r.reference """
         cursor.execute(sql, district_id)
-        conn.close()
+        self.conn.close()
         rows = cursor.fetchall()
         #Convert to JSON format
+        #print("In Models: references_by_district rows ", rows)
         for row in rows:
             json_ref = {'reference_id': row[0], 'reference': row[1],
                 'filename': row[2], 'url': row[3]}
@@ -195,15 +192,14 @@ class Queries():
 ######################################################################
     def references_by_category(self, category_id):
         json_refs = []
-        conn = db.connect()
-        cursor = conn.cursor()
+        cursor = self.conn.cursor()
         sql = """SELECT r.reference_id, r.reference, r.filename, r.url
             FROM reference r
             INNER JOIN category_to_reference c ON c.reference_id = r.reference_id
             WHERE c.category_id = %s
             ORDER BY r.reference """
         cursor.execute(sql, category_id)
-        conn.close()
+        self.conn.close()
         rows = cursor.fetchall()
         #Convert to JSON format
         for row in rows:
@@ -235,15 +231,14 @@ class Queries():
             json_refs.append(json_ref)
             json_ref = {}
         return json_refs
-        
+
 #######################################################################
 # REFERENCE DISPLAY PDFS
 ######################################################################
 #THEN CONCAT('/static/pdfs/', filename)
     def url_pdf(self, id):
         json_refs = []
-        conn = db.connect()
-        cursor = conn.cursor()
+        cursor = self.conn.cursor()
         sql = """SELECT url, filename,
             CASE
                 WHEN filename IS NOT NULL AND filename != 'None' AND filename != ''
@@ -256,7 +251,298 @@ class Queries():
                     OR (filename IS NOT NULL and filename != 'None' and filename != ''))"""
         cursor.execute(sql, id)
         row = cursor.fetchone()
-        conn.close()
+        self.conn.close()
         #Convert to JSON format
         json_ref = {'url': row[2]}
         return json_ref
+
+
+#######################################################################
+# REFERENCES SEARCH
+######################################################################
+    def references_search(self, usrFrag):
+        json_refs = []
+        cursor = self.conn.cursor()
+        usrFragSQL1 = '%' + '' + '%'
+        usrFragSQL2 = '%' + '' + '%'
+        usrFragSQL3 = '%' + '' + '%'
+        usrFragSplit = usrFrag.split(',')
+        if len(usrFragSplit) == 1:
+            usrFragSQL1 = '%' + usrFragSplit[0] + '%'
+        if len(usrFragSplit) == 2:
+            usrFragSQL1 = '%' + usrFragSplit[0] + '%'
+            usrFragSQL2 = '%' + usrFragSplit[1] + '%'
+        if len(usrFragSplit) == 3:
+            usrFragSQL1 = '%' + usrFragSplit[0] + '%'
+            usrFragSQL2 = '%' + usrFragSplit[1] + '%'
+            usrFragSQL3 = '%' + usrFragSplit[2] + '%'
+        sql = """SELECT reference_id, reference, filename, url
+                    FROM reference
+                    WHERE (reference like %s and reference like %s and reference like %s)
+                    ORDER BY reference """
+        cursor.execute(sql, (usrFragSQL1, usrFragSQL2, usrFragSQL3))
+        self.conn.close()
+        rows = cursor.fetchall()
+        #Convert to JSON format
+        for row in rows:
+            json_ref = {'reference_id': row[0], 'reference': row[1],
+                'filename': row[2], 'url': row[3]}
+            #json_ref = {'reference_id': row[0], 'reference': row[1]}
+            json_refs.append(json_ref)
+            json_ref = {}
+        return json_refs
+
+
+#######################################################################
+#######################################################################
+# REFERENCE - EDIT PAGES
+######################################################################
+#######################################################################
+
+#######################################################################
+# REFERENCE - EDIT PAGE FOR ALL DISTRICTS
+######################################################################
+    def references_edit(self, id):
+        #print('references_edit in models, refid:  ', id)
+        json_refs = []
+        cursor = self.conn.cursor()
+        sql = """SELECT *
+            FROM reference
+            WHERE reference_id = %s"""
+        cursor.execute(sql, id)
+        self.conn.close()
+        rows = cursor.fetchall()
+        #Convert to JSON format
+        for row in rows:
+            json_ref = {'reference_id': row[0], 'reference': row[1],
+                'source': row[2], 'verified': row[3], 'filename': row[4],
+                'url': row[5], 'section': row[6]}
+            json_refs.append(json_ref)
+            json_ref = {}
+        return json_refs
+
+#######################################################################
+# REFERENCE - EDIT PAGE FOR ALL DISTRICTS
+######################################################################
+    def districts_by_reference(self, refid):
+        json_refs = []
+        cursor = self.conn.cursor()
+        sql = """SELECT r.district_id, d.district_name
+            FROM district_to_reference r
+            INNER JOIN district d ON d.district_id = r.district_id
+            WHERE r.reference_id = %s """
+        cursor.execute(sql, refid)
+        self.conn.close()
+        rows = cursor.fetchall()
+        #Convert to JSON format
+        for row in rows:
+            json_ref = {'district_id': row[0], 'district_name': row[1]}
+            json_refs.append(json_ref)
+            json_ref = {}
+        return json_refs
+
+#######################################################################
+# REFERENCE - EDIT PAGE FOR CATEGORIES
+######################################################################
+    def categories_by_reference(self, refid):
+        json_refs = []
+        cursor = self.conn.cursor()
+        sql = """SELECT r.category_id, c.category_name, c.category_description
+            FROM category_to_reference r
+            INNER JOIN category c ON c.category_id = r.category_id
+            WHERE r.reference_id = %s """
+        cursor.execute(sql, refid)
+        self.conn.close()
+        rows = cursor.fetchall()
+        #Convert to JSON format
+        for row in rows:
+            json_ref = {'category_id': row[0],
+                'category_name': row[1], 'category_description': row[2]}
+            json_refs.append(json_ref)
+            json_ref = {}
+        return json_refs
+
+#######################################################################
+# REFERENCE - EDIT PAGE FOR SPECIIAL COLLECTIONS
+######################################################################
+    def specialCollections_by_reference(self, refid):
+        json_refs = []
+        cursor = self.conn.cursor()
+        sql = """SELECT r.spcol_id, s.spcol_name, s.spcol_description
+            FROM specialCollection_to_reference r
+            INNER JOIN special_collection s ON s.spcol_id = r.spcol_id
+            WHERE r.reference_id = %s """
+        cursor.execute(sql, refid)
+        self.conn.close()
+        rows = cursor.fetchall()
+        #Convert to JSON format
+        for row in rows:
+            json_ref = {'special_id': row[0],
+                'special_name': row[1], 'special_description': row[2]}
+            json_refs.append(json_ref)
+            json_ref = {}
+        return json_refs
+
+
+###############################################################################
+###############################################################################
+# REFERENCE EDIT - UPDATE DATABASE
+###############################################################################
+###############################################################################
+    def references_newRefid(self):
+        # Get a new reference_id
+        #print('refid1 in models: ')
+        cursor = self.conn.cursor()
+        sql = """SELECT MAX(reference_id)
+           FROM reference"""
+        cursor.execute(sql)
+        tup = cursor.fetchone()
+        newRefid = str(tup[0] + 1)
+        self.conn.close()
+        #cursor.close()
+
+        #print('newRefid in models, refid:  ', newRefid)
+
+        return newRefid
+
+    def references_edit_new(self, reference, source, filename, url, yn):
+        #print('references_edit_new in models, refid:  ', refid)
+        # Get a new reference_id
+        cursor = self.conn.cursor()
+        sql = """SELECT MAX(reference_id)
+           FROM reference"""
+        cursor.execute(sql)
+        tup = cursor.fetchone()
+        refid = str(tup[0] + 1)
+        # Insert main dta for new reference
+        sql = """INSERT
+                INTO reference (reference_id, reference, source, filename, url, verified)
+                VALUES(%s, %s, %s, %s, %s, %s)"""
+        cursor.execute(sql, (refid, reference, source, filename, url, yn))
+        self.conn.commit()
+        self.conn.close()
+        #cursor.close()
+
+        return refid
+
+    def references_edit_delete(self, refid):
+        #print('references_edit_delete in models, refid:  ', refid)
+        cursor = self.conn.cursor()
+        #print('In references_delete')
+        # Delete the current reference
+        sql = """DELETE
+                FROM reference
+                WHERE reference_id = %s """
+        cursor.execute(sql, refid)
+        self.conn.commit()
+
+        sql = """DELETE
+                FROM district_to_reference
+                WHERE reference_id = %s """
+        cursor.execute(sql, refid)
+        self.conn.commit()
+
+        sql = """DELETE
+                FROM category_to_reference
+                WHERE reference_id = %s """
+        cursor.execute(sql, refid)
+        self.conn.commit()
+
+        sql = """DELETE
+                FROM specialCollection_to_reference
+                WHERE reference_id = %s """
+        cursor.execute(sql, refid)
+        self.conn.commit()
+
+        sql = """SELECT MAX(reference_id)
+           FROM reference"""
+        cursor.execute(sql)
+        tup = cursor.fetchone()
+        refid = str(tup[0] + 1)
+
+        self.conn.close()
+        #cursor.close()
+
+        return refid
+
+    ###############################################################################
+    ###############################################################################
+    # REFERENCE EDIT - SAVE
+    ###############################################################################
+    ###############################################################################
+    def references_edit_save(self, refid, reference, source, filename, url, yn):
+        #print('references_edit_save in models, refid:  ', refid)
+        cursor = self.conn.cursor()
+        #IF THE REFERENCE_ID EXISTS WE UPDATE ELSE WE INSERT
+        sql = """SELECT reference_id
+           FROM reference
+           WHERE reference_id = %s """
+        cursor.execute(sql, (refid))
+        tup = cursor.fetchone()
+
+        if tup == None:
+            #print("inserting")
+            sql = """INSERT
+                INTO reference (reference_id, reference, source, filename, url, verified)
+                VALUES(%s, %s, %s, %s, %s, %s)"""
+            cursor.execute(sql, (refid, reference, source, filename, url, yn))
+        else:
+            #print("updating")
+            sql = """UPDATE reference
+                 SET reference = %s, source = %s, filename = %s, url = %s, verified = %s
+                 WHERE reference_id = %s"""
+            cursor.execute(sql, (reference, source, filename, url, yn, refid))
+        self.conn.commit()
+        self.conn.close()
+
+    def references_edit_save_districts(self, refid, district_ids):
+        #print('references_edit_save_districts in models, refid:  ', refid)
+        cursor = self.conn.cursor()
+        sql = """DELETE
+           FROM district_to_reference
+           WHERE reference_id = %s """
+        cursor.execute(sql, (refid))
+        self.conn.commit()
+
+        for district_id in district_ids:
+             sql = """INSERT IGNORE
+                INTO district_to_reference (district_id, reference_id)
+                VALUES(%s, %s)"""
+             cursor.execute(sql, (district_id, refid))
+             self.conn.commit()
+        #cursor.close()
+        self.conn.close()
+
+    def references_edit_save_categories(self, refid, category_ids):
+        #print('references_edit_save_categories in models, refid:  ', refid)
+        cursor = self.conn.cursor()
+        sql = """DELETE
+           FROM category_to_reference
+           WHERE reference_id = %s """
+        cursor.execute(sql, (refid))
+        self.conn.commit()
+
+        for category_id in category_ids:
+             sql = """INSERT IGNORE
+                INTO category_to_reference (category_id, reference_id)
+                VALUES(%s, %s)"""
+             cursor.execute(sql, (category_id, refid))
+             self.conn.commit()
+        self.conn.close()
+
+    def references_edit_save_specials(self, refid, special_ids):
+        #print('references_edit_save_specials in models, refid:  ', refid)
+        cursor = self.conn.cursor()
+        sql = """DELETE
+           FROM specialCollection_to_reference
+           WHERE reference_id = %s """
+        cursor.execute(sql, (refid))
+        self.conn.commit()
+
+        for special_id in special_ids:
+             sql = """INSERT IGNORE
+                INTO specialCollection_to_reference (spcol_id, reference_id)
+                VALUES(%s, %s)"""
+             cursor.execute(sql, (special_id, refid))
+             self.conn.commit()
+        self.conn.close()
