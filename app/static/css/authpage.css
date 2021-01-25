@@ -1,6 +1,11 @@
 
-form {
+/* form {
   max-width: 500px;
   position:fixed;
   top:100px;
+} */
+
+.auth_container {
+  width: 25%;
+  margin-left: 10%;
 }
