@@ -19,7 +19,7 @@
     color: white;
 }
 
-.btn {
+.btn1 {
      font-size: 14pt;
      font-family: helvetica;
      width: 15%;
@@ -77,9 +77,6 @@
   width: 500px;
 }
 
-/* .search-btn:hover{
-  background: white;
-} */
 
 .search-btn{
   /* color: #e84118; */

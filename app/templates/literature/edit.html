@@ -12,66 +12,99 @@
 
 <p hidden id="dummy" >{{refid}}</p>
 
-<div class="form">
+<div class="form" style="margin-left:25px;">
      <div class="form-heading">Make Edits</div>
      <p>Reference Id = {{refid}}</p>
      <form action="" name="myform" method="post">
-          <label>
-               <span>Reference</span>
-               <textarea name="reference" class="large-field"></textarea>
-          </label>
-          <label>
-               <span>Source </span>
-               <input name="source" type="text" class="small-field"/>
-          </label>
-          <label>
-               <span>Filename</span>
-               <input name="filename" type="text" class="small-field"/>
-          </label>
-          <label>
-               <span>URL</span>
-               <input name="url" id="ur" type="text" class="small-field"/>
-          </label>
 
-     	<div class="edit_selects">
-     		<label>
-     			<span>Districts</span>
-     	          <select name="districts_dropdown"
-                         id="districts_dropdown" class="select-dropdown">
-                         <option value="Start">--By District--</option>
-     	          </select>
-     	     </label><br>
-           <span id="list-districts">
-              <ul id="districts_former" contenteditable="true"></ul>
-           </span>
-     	</div>
+       <div class="form-group">
+         <div class="row">
+           <div class="col-lg-2">
+             <label for="reference">Reference</label>
+           </div>
+           <div class="col-lg-10">
+             <textarea name="reference" class="form-control editCol2" rows="8"></textarea>
+           </div>
+         </div>
+       </div>
 
-     	<div class="edit_selects">
-     		<label>
-     			<span>Categories</span>
-     	          <select name="categories_dropdown"
-                         id="categories_dropdown" class="select-dropdown">
-                         <option value="Start">--By Category--</option>
-     	          </select>
-     	     </label><br>
-               <span id="list-categories">
-                    <ul id="categories_former" contenteditable="true"> </ul>
-               </span>
-     	</div>
+       <div class="form-group">
+         <div class="row">
+           <div class="col-lg-2">
+             <label for="source">Source</label>
+           </div>
+           <div class="col-lg-10">
+             <input name="source" class="form-control editCol2"></input>
+           </div>
+         </div>
+       </div>
 
-      <div class="edit_selects">
-        <label>
-          <span>Special Collections</span>
-                <select name="specials_dropdown"
-                         id="specials_dropdown"
-                         class="select-dropdown">
-                         <option value="Start">--By Specials--</option>
-                </select>
-           </label><br>
-               <span id="list-specials">
-                    <ul id="specials_former" contenteditable="true"> </ul>
-               </span>
-      </div>
+       <div class="form-group">
+         <div class="row">
+           <div class="col-lg-2">
+             <label for="filename">Filename</label>
+           </div>
+           <div class="col-lg-10">
+             <input name="filename" class="form-control editCol2"></input>
+           </div>
+         </div>
+       </div>
+
+       <div class="form-group">
+         <div class="row">
+           <div class="col-lg-2">
+             <label for="url">URL</label>
+           </div>
+           <div class="col-lg-10">
+             <input name="url" class="form-control editCol2"></input>
+           </div>
+         </div>
+       </div>
+
+       <div class="form-group">
+         <div class="row">
+           <div class="col-lg-2">
+             <div class="dropdown">
+               <select class="btn btn-primary dropdown-toggle editDD" type="button" data-toggle="dropdown" id="districts_dropdown" style="width:200px;padding:0">
+                 <option>Districts</option></select>
+                 <ul class="dropdown-menu" ></ul>
+               </div>
+             </div>
+             <div class="col-lg-10">
+               <ul id="districts_former" contenteditable="true"></ul>
+             </div>
+           </div>
+         </div>
+
+         <div class="form-group">
+           <div class="row">
+             <div class="col-lg-2">
+               <div class="dropdown">
+                 <select class="btn btn-primary dropdown-toggle editDD" type="button" data-toggle="dropdown" id="categories_dropdown" style="width:200px;padding:0">
+                   <option>Categories</option></select>
+                   <ul class="dropdown-menu" ></ul>
+                 </div>
+               </div>
+               <div class="col-lg-10">
+                 <ul id="categories_former" contenteditable="true"></ul>
+               </div>
+             </div>
+           </div>
+
+           <div class="form-group">
+             <div class="row">
+               <div class="col-lg-2">
+                 <div class="dropdown">
+                   <select class="btn btn-primary dropdown-toggle editDD"" type="button" data-toggle="dropdown" id="specials_dropdown" style="width:200px;padding:0">
+                     <option>Special Collections</option></select>
+                     <ul class="dropdown-menu" ></ul>
+                   </div>
+                 </div>
+                 <div class="col-lg-10">
+                   <ul id="specials_former" contenteditable="true"></ul>
+                 </div>
+               </div>
+             </div>
 
       <span>Verified?</span>
       <span>Yes <input type="radio" name="yn" value="yes"/> </span>
@@ -79,14 +112,12 @@
 
       <br><br><br>
 
-     	<div class="edit_buttons">
+     	<div>
      		<button id="save">Save</button>
      		<button onclick="cancelFunction()">Cancel</button>
         <button id="new">New Reference</button>
-     		<button  type="button" id="delete">Delete Reference</button>
+     		<button type="button" id="delete">Delete Reference</button>
      	</div>
-
-     </form>
 
 </div>
 
@@ -132,8 +163,8 @@ $("#new").click(function() {
 //*************************************************************
 $("#delete").click(function() {
     console.log("About to delete");
-    alert("Delete button currently inactive")
-    //doAjax_delete();
+    //alert("Delete button currently inactive")
+    doAjax_delete();
 });
 
 //*************************************************************
@@ -347,6 +378,7 @@ $("#specials_dropdown").change(function() {
        if (data['yn'] == undefined) {
             data['yn'] = 'no';
        }
+       console.log("edit.html $myurl ", $myurl)
        if ($refid == 0) {
             //data['yn'] = 'no';
             $.ajax({
@@ -362,7 +394,7 @@ $("#specials_dropdown").change(function() {
             } else {
             $.ajax({
               type: "POST",
-              //contentType: 'application/json;charset=UTF-8',
+              contentType: 'application/json;charset=UTF-8',
               url: $myurl+"literature/edit/references_edit_save",
               dataType: "text",
               data: JSON.stringify(data),
@@ -370,7 +402,7 @@ $("#specials_dropdown").change(function() {
                    //alert("I am here3")
                    //console.log("edit.html hi ")
                     //Add the following alert in final
-                    alert("Reference was updated")
+                    alert("Reference was successfully updated")
                     }
               });
          };

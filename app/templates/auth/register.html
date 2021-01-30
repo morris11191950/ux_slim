@@ -5,8 +5,8 @@
 {% endblock title %}
 
 {% block authcontent %}
-    <div class="content-section">
-        <form method="POST" action="" style="width: 500px; margin-left: 10%">
+    <div class="content-section auth_container">
+        <form method="POST" action="">
             {{ form.hidden_tag() }}
             <fieldset class="form-group">
                 <legend class="border-bottom mb-4">Register for Uranium Exploration</legend>
@@ -61,7 +61,7 @@
             </div>
         </form>
     </div>
-    <div class="border-top pt-3">
+    <div class="border-top pt-3 auth_container">
         <small class="text-muted">
             Already Have An Account? <a class="ml-2" href="{{ url_for('auth.login') }}">Sign In</a>
         </small>

@@ -65,13 +65,9 @@ def references_search(id):
 ##########################################################################
 @literature.route('/literature/references_edit/<refid>', methods=['GET', 'POST'])
 def references_edit(refid):
-    #Get new reference id
-    #print('references_edit1 in views, refid: ', refid)
-    #print('type refid1 in views: ', type(refid))
+    #print('references_edit in views, refid: ', refid)
     if refid == '0':
-        #print('references_edit2 in views, refid: ', refid)
         refid = Queries().references_newRefid()
-    #print('references_edit3 in views, refid: ', refid)
     return render_template('literature/edit.html', refid=refid)
 
 @literature.route('/literature/edit/references_edit_load/<refid>')
@@ -148,8 +144,9 @@ def references_delete():
 
 @literature.route('/literature/edit/references_edit_save', methods=['POST'])
 def references_edit_save():
-
+    print("references_edit_save in views, refid: ")
     refid = request.json['refid']
+    print("references_edit_save in views, refid2: ")
     reference = request.json['reference']
     source = request.json['source']
     filename = request.json['filename']
