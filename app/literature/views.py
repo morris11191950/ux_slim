@@ -65,7 +65,7 @@ def references_search(id):
 ##########################################################################
 @literature.route('/literature/references_edit/<refid>', methods=['GET', 'POST'])
 def references_edit(refid):
-    #print('references_edit in views, refid: ', refid)
+    print('references_edit in views Check This, refid: ', refid)
     if refid == '0':
         refid = Queries().references_newRefid()
     return render_template('literature/edit.html', refid=refid)
@@ -144,9 +144,9 @@ def references_delete():
 
 @literature.route('/literature/edit/references_edit_save', methods=['POST'])
 def references_edit_save():
-    print("references_edit_save in views, refid: ")
+    #print("references_edit_save in views, refid: ")
     refid = request.json['refid']
-    print("references_edit_save in views, refid2: ")
+    #print("references_edit_save in views, refid2: ", refid)
     reference = request.json['reference']
     source = request.json['source']
     filename = request.json['filename']
@@ -162,15 +162,15 @@ def references_edit_save():
          yn = 'n'
 
     #Query to get the inputs from referenc table
-    #print("references_edit_save1 in views, refid: ", refid)
+    print("references_edit_save1 in views, refid: ", refid)
     Queries().references_edit_save(refid, reference, source, filename, url, yn)
-    #print("references_edit_save2 in views, refid: ", refid)
+    print("references_edit_save2 in views, refid: ", refid)
     Queries().references_edit_save_districts(refid, district_ids)
-    #print("references_edit_save3 in views, refid: ", refid)
+    print("references_edit_save3 in views, refid: ", refid)
     Queries().references_edit_save_categories(refid, category_ids)
-    #print("references_edit_save4 in views, refid: ", refid)
+    print("references_edit_save4 in views, refid: ", refid)
     Queries().references_edit_save_specials(refid, special_ids)
-    #print("all edits complete in view: ")
+    print("all edits complete in view: ")
     return '0'
 
 ##########################################################################

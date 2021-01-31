@@ -471,7 +471,7 @@ class Queries():
     ###############################################################################
     ###############################################################################
     def references_edit_save(self, refid, reference, source, filename, url, yn):
-        #print('references_edit_save in models, refid:  ', refid)
+        print('references_edit_save in models, refid:  ', refid)
         cursor = self.conn.cursor()
         #IF THE REFERENCE_ID EXISTS WE UPDATE ELSE WE INSERT
         sql = """SELECT reference_id
@@ -481,13 +481,13 @@ class Queries():
         tup = cursor.fetchone()
 
         if tup == None:
-            #print("inserting")
+            print("inserting")
             sql = """INSERT
                 INTO reference (reference_id, reference, source, filename, url, verified)
                 VALUES(%s, %s, %s, %s, %s, %s)"""
             cursor.execute(sql, (refid, reference, source, filename, url, yn))
         else:
-            #print("updating")
+            print("updating")
             sql = """UPDATE reference
                  SET reference = %s, source = %s, filename = %s, url = %s, verified = %s
                  WHERE reference_id = %s"""
@@ -496,7 +496,7 @@ class Queries():
         self.conn.close()
 
     def references_edit_save_districts(self, refid, district_ids):
-        #print('references_edit_save_districts in models, refid:  ', refid)
+        print('references_edit_save_districts in models, refid:  ', refid)
         cursor = self.conn.cursor()
         sql = """DELETE
            FROM district_to_reference
@@ -511,10 +511,10 @@ class Queries():
              cursor.execute(sql, (district_id, refid))
              self.conn.commit()
         #cursor.close()
-        self.conn.close()
+        cursor.close()
 
     def references_edit_save_categories(self, refid, category_ids):
-        #print('references_edit_save_categories in models, refid:  ', refid)
+        print('references_edit_save_categories in models, refid:  ', refid)
         cursor = self.conn.cursor()
         sql = """DELETE
            FROM category_to_reference
@@ -528,10 +528,10 @@ class Queries():
                 VALUES(%s, %s)"""
              cursor.execute(sql, (category_id, refid))
              self.conn.commit()
-        self.conn.close()
+        cursor.close()
 
     def references_edit_save_specials(self, refid, special_ids):
-        #print('references_edit_save_specials in models, refid:  ', refid)
+        print('references_edit_save_specials in models, refid:  ', refid)
         cursor = self.conn.cursor()
         sql = """DELETE
            FROM specialCollection_to_reference
@@ -545,4 +545,4 @@ class Queries():
                 VALUES(%s, %s)"""
              cursor.execute(sql, (special_id, refid))
              self.conn.commit()
-        self.conn.close()
+        cursor.close()

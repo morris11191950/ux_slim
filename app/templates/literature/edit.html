@@ -15,7 +15,6 @@
 <div class="form" style="margin-left:25px;">
      <div class="form-heading">Make Edits</div>
      <p>Reference Id = {{refid}}</p>
-     <form action="" name="myform" method="post">
 
        <div class="form-group">
          <div class="row">
@@ -398,12 +397,9 @@ $("#specials_dropdown").change(function() {
               url: $myurl+"literature/edit/references_edit_save",
               dataType: "text",
               data: JSON.stringify(data),
-              complete: function() {
-                   //alert("I am here3")
-                   //console.log("edit.html hi ")
-                    //Add the following alert in final
+              success: function() {
                     alert("Reference was successfully updated")
-                    }
+                  }
               });
          };
        };

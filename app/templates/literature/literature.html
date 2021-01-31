@@ -74,9 +74,7 @@ $("input").on("keydown",function search(e) {
 //*************************************************************
 $("#button_new_ref").click(function() {
      doAjax_new();
-     window.open($myurl+"/literature/references_edit/0");
-     //window.open('http://0.0.0.0:5000/literature/references_edit/0');
-     //window.open('http://10.0.1.29:5000/literature/references_edit/0');
+     window.open($myurl+"literature/references_edit/0");
 });
 
 //*************************************************************
@@ -273,8 +271,7 @@ var doAjax_districts = function() {
                       var clickIndex = $(this).parent('li').index()
                       var refIndex = objects[clickIndex].reference_id;
                       theUrl = $myurl+"literature/references_edit/" + refIndex
-                      //theUrl = 'http://0.0.0.0:5000/literature/references_edit/' + refIndex
-                      //theUrl = 'http://10.0.1.29:5000/literature/references_edit/' + refIndex
+
                       window.open(theUrl, '_self');
                  });
 
@@ -339,9 +336,7 @@ var doAjax_references_by_district = function(inputValue) {
               $(".refEditButton").click(function() {
                    var clickIndex = $(this).parent('li').index()
                    var refIndex = objects[clickIndex].reference_id;
-                   theUrl = 'http://127.0.0.1:5000/literature/references_edit/' + refIndex
-                   //theUrl = 'http://0.0.0.0:5000/literature/references_edit/' + refIndex
-                   //theUrl = 'http://10.0.1.29:5000/literature/references_edit/' + refIndex
+                   theUrl = $myurl+'literature/references_edit/' + refIndex
                    window.open(theUrl, '_self');
               });
 
@@ -407,8 +402,6 @@ var doAjax_references_by_district = function(inputValue) {
                       var clickIndex = $(this).parent('li').index()
                       var refIndex = objects[clickIndex].reference_id;
                       theUrl = $myurl+"literature/references_edit/" + refIndex
-                      //theUrl = 'http://0.0.0.0:5000/literature/references_edit/' + refIndex
-                      //theUrl = 'http://10.0.1.29:5000/literature/references_edit/' + refIndex
                       window.open(theUrl, '_self');
                  });
 
@@ -472,7 +465,6 @@ var doAjax_references_by_district = function(inputValue) {
                        var clickIndex = $(this).parent('li').index()
                        var refIndex = objects[clickIndex].reference_id;
                        theUrl = $myurl+"literature/references_edit/" + refIndex
-                       //theUrl = 'http://10.0.1.29:5000/literature/references_edit/' + refIndex
                        window.open(theUrl, '_self');
                   });
 

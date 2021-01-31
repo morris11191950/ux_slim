@@ -29,3 +29,10 @@
 	font-size: 24px;
 	padding-bottom: 3px;
 }
+
+
+.editDistrictDeleteButton, .editCategoryDeleteButton, .editSpecialDeleteButton {color:#FF6347; font-style: italic;}
+.editDistrictDeleteButton:hover, .editCategoryDeleteButton:hover, .editSpecialDeleteButton:hover {
+    background-color: skyblue;
+    cursor: pointer;
+}
