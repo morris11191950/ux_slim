@@ -15,7 +15,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
 
     <!-- Links to my css static files -->
-    
+
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/nav.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/homepage.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/authpage.css') }}">
@@ -38,27 +38,32 @@
 <body>
 
 <div>
-  <nav class="nav">
-    <h1> UX {% block nav1 %}{% endblock nav1 %} </h1>
-    <ul id="nav_list">
-       <li><a href="{{ url_for('home.homepage') }}">Home</a>
-       <li><a href="{{ url_for('literature.literature') }}">Literature</a>
-       <li><a href="{{ url_for('deposits.deposits_home') }}">Ore Deposits</a>
-       <li><a href="{{ url_for('maps.maps_home') }}">Maps</a>
-       <li><a href="{{ url_for('trading_post.trading_post') }}">Trading Post</a>
-       <li><a href="{{ url_for('prospects.prospects_home') }}">Prospects</a>
+  <nav class="navbar navbar-expand-sm bg-light fixed-top p-0">
+    <ul class="navbar-nav w-100" style="background:lightgray;">
+       <li class="nav-item pt-3" style="width:400px;"> UX {% block nav1 %}{% endblock nav1 %}</li>
+       <li class="nav-item p-3"><a href="{{ url_for('home.homepage') }}">Home</a>
+       <li class="nav-item p-3"><a href="{{ url_for('literature.literature') }}">Literature</a>
+       <li class="nav-item p-3"><a href="{{ url_for('deposits.deposits_home') }}">Ore Deposits</a>
+       <li class="nav-item p-3"><a href="{{ url_for('maps.maps_home') }}">Maps</a>
+       <li class="nav-item p-3"><a href="{{ url_for('trading_post.trading_post') }}">Trading Post</a>
+       <li class="nav-item p-3"><a href="{{ url_for('prospects.prospects_home') }}">Prospects</a>
          {% if current_user.is_authenticated %}
-            <li><a href="{{ url_for('auth.logout') }}">Log Out</a>
+            <li class="nav-item p-3"><a href="{{ url_for('auth.logout') }}">Log Out</a>
          {% else %}
-            <li><a href="{{ url_for('auth.login') }}">Log In</a>
-            <li><a href="{{ url_for('auth.register') }}">Register</a>
+            <li class="nav-item p-3"><a href="{{ url_for('auth.login') }}">Log In</a>
+            <li class="nav-item p-3"><a href="{{ url_for('auth.register') }}">Register</a>
          {% endif %}
+
     </ul>
   </nav>
 </div>
 
-<div id="nav2">
-  {% block nav2 %}{% endblock nav2 %}
+<div>
+  <nav class="navbar navbar-expand-sm bg-light fixed-top p-0 navbar-nav w-100" style="margin-top:56px;">
+    <div class="navbar-nav w-100" style="background:lightgray;">
+      {% block nav2 %}{% endblock nav2 %}
+    </div>
+  </nav>
 </div>
 
 {% block body %}{% endblock body %}
