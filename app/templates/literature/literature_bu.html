@@ -13,33 +13,15 @@
 BUTTONS FOR MAIN LITERATURE VIEW
 ***************************************************************** -->
 
-<li id="base2_menu" class="nav-item p-3">
-  <select id="button_districts">
-    <option value="Start">Districts</option>
-  </select>
-</li>
-<li id="base2_menu" class="nav-item p-3">
-  <select id="button_categories">
-    <option value="Start">Categories</option>
-  </select>
-</li>
-<li id="base2_menu" class="nav-item p-3">
-  <select id="button_specialCollections">
-    <option value="Start">Special Collections</option>
-  </select>
-</li>
-<li id="base2_menu" class="nav-item p-0">
-  <button class="btn2" id="button_new_ref"><i class="fa fa-plus"></i></button>
-</li>
-<li class="nav-item p-3">
-  <div class="search-box">
-    <input class="search-txt" type="text" name="" placeholder="Up to 3 comma-separated strings, e.g. chinle,uran,utah">
-    <a class="search-btn" href="#">
-      <i class="fas fa-search"></i>
-    </a>
-  </div>
-</li>
+<li class="nav-item p-3"><a href="{{ url_for('literature.literature') }}">Literature</a>
 
+
+  <li id="base2_menu" class="nav-item p-3">
+    <a href="#">aDistricts</a>
+          <select class="btn1" id="button_districts">
+               <option value="Start">Districts</option>
+          </select>
+  </li>
 
 {% endblock nav2%}
 
