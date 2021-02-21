@@ -1,19 +1,20 @@
 from app import db, login_manager
 from flask import session
 from werkzeug.security import check_password_hash, generate_password_hash
-from flask_login import UserMixin
+from flask_login import UserMixin, current_user
 
 @login_manager.user_loader
 def load_user(user_id):
     userData = Queries().get(user_id)
-    user = User(userData[0], userData[1], userData[2], userData[3])
+    user = User(userData[0], userData[1], userData[2], userData[3], userData[4])
     return user
 
 class User(UserMixin):
 
-    def __init__(self, id, username, isAdmin_yn, password_hash, active=True):
+    def __init__(self, id, isAdmin_yn, username, email, password_hash, active=True):
         self.id = id
         self.username = username
+        self.email = email
         self.password_hash = password_hash
         self.active = active
         self.isAdmin_yn = isAdmin_yn
@@ -71,7 +72,7 @@ class Queries():
         if usrData == None:
             return None
 
-        password_hash = usrData[3]
+        password_hash = usrData[4]
         pwCheck = check_password_hash(password_hash, password)
 
         if pwCheck:
@@ -85,13 +86,13 @@ class Queries():
 #######################################################################
 # REGISTER A NEW USER
 ######################################################################
-    def register(self, username, password):
+    def register(self, username, password, email):
         #print("username ", username)
         #print("password ", password)
         cursor = self.conn.cursor()
         pwh = generate_password_hash(password)
-        s = "('" + username + "', '" + pwh + "')"
-        sql = "INSERT INTO user (username, password_hash) VALUES " + s
+        s = "('" + username + "', '" + pwh + "', '" + email + "')"
+        sql = "INSERT INTO user (username, password_hash, email) VALUES " + s
         cursor.execute(sql)
         self.conn.commit()
 
@@ -101,6 +102,21 @@ class Queries():
         self.conn.close()
 
         return usrData
+
+#######################################################################
+# UPDATE USER ACCOUNT
+######################################################################
+    def update_account(self, username, email):
+        print("username ", username)
+        print("current_user ", current_user.username)
+        currentUser = current_user.username
+        cursor = self.conn.cursor()
+
+        sql = """UPDATE user
+            SET username = %s, email = %s
+            WHERE username = %s """
+        cursor.execute(sql, (username, email, currentUser))
+        self.conn.commit()
 
 #######################################################################
 # DISTRICTS ALL

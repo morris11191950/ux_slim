@@ -48,6 +48,7 @@
        <li class="nav-item p-3"><a href="{{ url_for('trading_post.trading_post') }}">Trading Post</a>
        <li class="nav-item p-3"><a href="{{ url_for('prospects.prospects_home') }}">Prospects</a>
          {% if current_user.is_authenticated %}
+            <li class="nav-item p-3"><a href="{{ url_for('auth.account') }}">Account</a>
             <li class="nav-item p-3"><a href="{{ url_for('auth.logout') }}">Log Out</a>
          {% else %}
             <li class="nav-item p-3"><a href="{{ url_for('auth.login') }}">Log In</a>
