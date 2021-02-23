@@ -31,3 +31,16 @@ class UpdateAccountForm(FlaskForm):
             usrData = Queries().register_checkUser(username.data)
             if usrData:
                 raise ValidationError('That username is taken. Please choose a different one.')
+
+class RequestResetForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    submit = SubmitField('Request Password Reset')
+    def validate_username(self, username):
+            user = Queries().register_checkUser(username.data)
+            if user is None:
+                raise ValidationError('There is no account with that email. You must register first')
+
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField('Password', validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Reset Password')

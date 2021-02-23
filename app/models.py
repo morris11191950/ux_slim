@@ -1,5 +1,6 @@
 from app import db, login_manager
-from flask import session
+from flask import session, current_app
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import UserMixin, current_user
 
@@ -13,11 +14,34 @@ class User(UserMixin):
 
     def __init__(self, id, isAdmin_yn, username, email, password_hash, active=True):
         self.id = id
+        self.isAdmin_yn = isAdmin_yn
         self.username = username
         self.email = email
         self.password_hash = password_hash
         self.active = active
-        self.isAdmin_yn = isAdmin_yn
+
+
+    def get_reset_token(self, expires_sec=1800):
+        s = Serializer(current_app.config['SECRET_KEY'], expires_sec)
+        return s.dumps({'user_id':self.id}).decode('utf-8')
+
+    @staticmethod
+    def verify_reset_token(token):
+        #print("in verify_reset_token  ", token)
+
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            user_id = s.loads(token)['user_id']
+            #print("in verify_reset_token user id  ", user_id)
+        except:
+            return None
+        #print("in verify_reset_token user id2  ", user_id)
+        userData = Queries().get(user_id)
+        #print("in verify_reset_token user data  ", userData)
+        user = User(userData[0], userData[1], userData[2], userData[3], userData[4])
+        #print("in verify_reset_token user  ", user)
+        return user
+
 
 class Queries():
     def __init__(self):
@@ -58,10 +82,44 @@ class Queries():
         return usrData
 
 #######################################################################
+# UPDATE PASSWORD
+######################################################################
+    def update_password(self, username, password):
+        #print("username, password ", username, password)
+        pwh = generate_password_hash(password)
+
+        #currentUser = current_user.username
+        print("Update Password ", pwh, password, username)
+        cursor = self.conn.cursor()
+
+        sql = """UPDATE user
+            SET password_hash = %s
+            WHERE username = %s """
+        cursor.execute(sql, (pwh, username))
+        self.conn.commit()
+        self.conn.close()
+
+#######################################################################
+# RESET_PASSWORD_CHECKUSER
+######################################################################
+    def reset_password_checkUser(self, username):
+        #print("username in models ", username)
+        cursor = self.conn.cursor()
+
+        sql = "SELECT * FROM user WHERE username = '" + username + "' LIMIT 1"
+        #print("sql: ", sql)
+        cursor.execute(sql)
+        user = cursor.fetchone()
+        #print("user: ", user)
+        self.conn.close()
+
+        return user
+
+#######################################################################
 # LOGIN_CHECKUSER
 ######################################################################
     def login_checkUser(self, username, password):
-        print("username ", username)
+        #print("username ", username)
         cursor = self.conn.cursor()
 
         sql = "SELECT * FROM user WHERE username = '" + username + "' "
@@ -107,8 +165,8 @@ class Queries():
 # UPDATE USER ACCOUNT
 ######################################################################
     def update_account(self, username, email):
-        print("username ", username)
-        print("current_user ", current_user.username)
+        #print("username ", username)
+        #print("current_user ", current_user.username)
         currentUser = current_user.username
         cursor = self.conn.cursor()
 
@@ -117,6 +175,7 @@ class Queries():
             WHERE username = %s """
         cursor.execute(sql, (username, email, currentUser))
         self.conn.commit()
+        self.conn.close()
 
 #######################################################################
 # DISTRICTS ALL
@@ -487,7 +546,7 @@ class Queries():
     ###############################################################################
     ###############################################################################
     def references_edit_save(self, refid, reference, source, filename, url, yn):
-        print('references_edit_save in models, refid:  ', refid)
+        #print('references_edit_save in models, refid:  ', refid)
         cursor = self.conn.cursor()
         #IF THE REFERENCE_ID EXISTS WE UPDATE ELSE WE INSERT
         sql = """SELECT reference_id
@@ -497,7 +556,7 @@ class Queries():
         tup = cursor.fetchone()
 
         if tup == None:
-            print("inserting")
+            #print("inserting")
             sql = """INSERT
                 INTO reference (reference_id, reference, source, filename, url, verified)
                 VALUES(%s, %s, %s, %s, %s, %s)"""
@@ -512,7 +571,7 @@ class Queries():
         self.conn.close()
 
     def references_edit_save_districts(self, refid, district_ids):
-        print('references_edit_save_districts in models, refid:  ', refid)
+        #print('references_edit_save_districts in models, refid:  ', refid)
         cursor = self.conn.cursor()
         sql = """DELETE
            FROM district_to_reference
@@ -530,7 +589,7 @@ class Queries():
         cursor.close()
 
     def references_edit_save_categories(self, refid, category_ids):
-        print('references_edit_save_categories in models, refid:  ', refid)
+        #print('references_edit_save_categories in models, refid:  ', refid)
         cursor = self.conn.cursor()
         sql = """DELETE
            FROM category_to_reference
@@ -547,7 +606,7 @@ class Queries():
         cursor.close()
 
     def references_edit_save_specials(self, refid, special_ids):
-        print('references_edit_save_specials in models, refid:  ', refid)
+        #print('references_edit_save_specials in models, refid:  ', refid)
         cursor = self.conn.cursor()
         sql = """DELETE
            FROM specialCollection_to_reference
