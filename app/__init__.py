@@ -3,6 +3,7 @@ from flaskext.mysql import MySQL
 from config import Config
 from flask_login import LoginManager
 from flask_mail import Mail
+from flask_cors import CORS
 
 db = MySQL()
 login_manager = LoginManager()
@@ -14,6 +15,7 @@ mail = Mail()
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
+    CORS(app)
 
     mail.init_app(app)
     db.init_app(app)

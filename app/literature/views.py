@@ -162,15 +162,15 @@ def references_edit_save():
          yn = 'n'
 
     #Query to get the inputs from referenc table
-    print("references_edit_save1 in views, refid: ", refid)
+    #print("references_edit_save1 in views, refid: ", refid)
     Queries().references_edit_save(refid, reference, source, filename, url, yn)
-    print("references_edit_save2 in views, refid: ", refid)
+    #print("references_edit_save2 in views, refid: ", refid)
     Queries().references_edit_save_districts(refid, district_ids)
-    print("references_edit_save3 in views, refid: ", refid)
+    #print("references_edit_save3 in views, refid: ", refid)
     Queries().references_edit_save_categories(refid, category_ids)
-    print("references_edit_save4 in views, refid: ", refid)
+    #print("references_edit_save4 in views, refid: ", refid)
     Queries().references_edit_save_specials(refid, special_ids)
-    print("all edits complete in view: ")
+    #print("all edits complete in view: ")
     return '0'
 
 ##########################################################################
@@ -180,8 +180,9 @@ def references_edit_save():
 ##########################################################################
 @literature.route('/literature/url_pdf/<id>')
 def url_pdf(id):
-    print('references_url_pdf in views, refid: ', id)
+    #print('references_url_pdf in views, refid: ', id)
     row = Queries().url_pdf(id)
+    #print("row: ", row)
     jsonStr = json.dumps(row)
     j = jsonify(Url=jsonStr)
     return j

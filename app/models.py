@@ -7,14 +7,13 @@ from flask_login import UserMixin, current_user
 @login_manager.user_loader
 def load_user(user_id):
     userData = Queries().get(user_id)
-    user = User(userData[0], userData[1], userData[2], userData[3], userData[4])
+    user = User(userData[0], userData[1], userData[2], userData[3])
     return user
 
 class User(UserMixin):
 
-    def __init__(self, id, isAdmin_yn, username, email, password_hash, active=True):
+    def __init__(self, id, username, email, password_hash, active=True):
         self.id = id
-        self.isAdmin_yn = isAdmin_yn
         self.username = username
         self.email = email
         self.password_hash = password_hash
@@ -38,7 +37,7 @@ class User(UserMixin):
         #print("in verify_reset_token user id2  ", user_id)
         userData = Queries().get(user_id)
         #print("in verify_reset_token user data  ", userData)
-        user = User(userData[0], userData[1], userData[2], userData[3], userData[4])
+        user = User(userData[0], userData[1], userData[2], userData[3])
         #print("in verify_reset_token user  ", user)
         return user
 
@@ -130,7 +129,8 @@ class Queries():
         if usrData == None:
             return None
 
-        password_hash = usrData[4]
+        password_hash = usrData[3]
+        #password_hash = usrData[4]
         pwCheck = check_password_hash(password_hash, password)
 
         if pwCheck:
@@ -326,6 +326,7 @@ class Queries():
                     OR (filename IS NOT NULL and filename != 'None' and filename != ''))"""
         cursor.execute(sql, id)
         row = cursor.fetchone()
+        #print('Row: ', row)
         self.conn.close()
         #Convert to JSON format
         json_ref = {'url': row[2]}
@@ -444,7 +445,7 @@ class Queries():
         json_refs = []
         cursor = self.conn.cursor()
         sql = """SELECT r.spcol_id, s.spcol_name, s.spcol_description
-            FROM specialCollection_to_reference r
+            FROM specialcollection_to_reference r
             INNER JOIN special_collection s ON s.spcol_id = r.spcol_id
             WHERE r.reference_id = %s """
         cursor.execute(sql, refid)

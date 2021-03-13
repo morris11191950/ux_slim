@@ -1,6 +1,6 @@
 from flask import render_template, flash, redirect, url_for, request
 from . import auth
-from forms import RegistrationForm, LoginForm, UpdateAccountForm, RequestResetForm, ResetPasswordForm
+from app.auth.forms import RegistrationForm, LoginForm, UpdateAccountForm, RequestResetForm, ResetPasswordForm
 from ..models import User, Queries
 from flask_login import login_user, logout_user, current_user, login_required
 from app import db, mail
@@ -32,7 +32,7 @@ def login():
     if form.validate_on_submit():
         usrData = Queries().login_checkUser(username, password)
         if usrData:
-            user = User(usrData[0], usrData[1], usrData[2], usrData[3], usrData[4])
+            user = User(usrData[0], usrData[1], usrData[2], usrData[3])
             #print('userRemember ', userRemember)
             login_user(user, remember=userRemember)
             next_page = request.args.get('next')
@@ -85,7 +85,7 @@ def reset_request():
     if form.validate_on_submit():
         userData = Queries().reset_password_checkUser(form.username.data)
         #print('userData ', userData)
-        user = User(userData[0], userData[1], userData[2], userData[3], userData[4])
+        user = User(userData[0], userData[1], userData[2], userData[3])
         #print('user ', user)
         send_reset_email(user)
         flash('An email has been sent with instructions to  reset your password', 'info')
@@ -101,7 +101,7 @@ def reset_token(token):
     print('user in reset ', user)
     if user is None:
         flash('That is an invalid or expired token', 'warning')
-        return redirect(url_for('reset_request'))
+        return redirect(url_for('auth.reset_request'))
     form = ResetPasswordForm()
     if form.validate_on_submit():
         hashed_password = Queries().update_password(user.username, form.password.data)

@@ -522,9 +522,16 @@ var doAjax_get_url_pdf = function(id_ref) {
         },
           complete: function(){
                $("#wait").hide();
-               //doAjax_display_pdf(object.url);
-               //console.log("object.url: ", object.url);
-               window.open(object.url);
+               var xhr = new XMLHttpRequest();
+               xhr.open('HEAD', object.url, false);
+               xhr.send();
+               s = xhr.status;
+               console.log("s ", s);
+               if (s == "404") {
+                 alert("This file does not exist. Please let the admin know!")
+               } else {
+                 window.open(object.url);
+               }
          }
       });
 }
