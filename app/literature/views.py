@@ -1,6 +1,6 @@
 from flask import render_template, jsonify, json, request
 from . import literature
-from flask_login import login_required
+from flask_login import login_required, current_user
 from ..models import Queries
 
 @literature.route('/literature/districts_all')
@@ -191,5 +191,9 @@ def url_pdf(id):
 @literature.route('/literature')
 @login_required
 def literature():
-    #print('In literature views ')
-    return render_template('literature/literature.html')
+    r = current_user.role
+    print('current_user role ', r)
+    type_r = type(r)
+    print('type_r ', type_r)
+    #print('In literature views: current_user role ', current_user.role)
+    return render_template('literature/literature.html', ROLE=r)

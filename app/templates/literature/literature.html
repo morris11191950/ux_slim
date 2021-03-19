@@ -237,7 +237,7 @@ var doAjax_districts = function() {
    var doAjax_references_search = function(usrFrag) {
 
       //  console.log("In ajax - usrFrag", usrFrag);
-
+        role = '{{ROLE}}';
         $("#wait").show();
         $('#references_all_display').empty()
         $('#literature_selected_display').empty()
@@ -256,24 +256,40 @@ var doAjax_districts = function() {
                      u = object.url
                      f = object.filename
                      r = object.reference + " Ref Id = " + object.reference_id + " "
-                     if (u && u!='None' && u!='') {
-                          $('#literature_selected_display').append(
-                          "<li style='color:blue'><span class='refEditTextHit'>"
-                               + r +
-                          "</span><span class='refEditButton'>[Edit]</span></li>")
-                        } else if (f && f!='None' && f!='') {
-                           $('#literature_selected_display').append(
+                     if (role=='admin') {
+                       if (u && u!='None' && u!='') {
+                            $('#literature_selected_display').append(
                             "<li style='color:blue'><span class='refEditTextHit'>"
                                  + r +
                             "</span><span class='refEditButton'>[Edit]</span></li>")
-                        } else {
+                          } else if (f && f!='None' && f!='') {
+                             $('#literature_selected_display').append(
+                              "<li style='color:blue'><span class='refEditTextHit'>"
+                                   + r +
+                              "</span><span class='refEditButton'>[Edit]</span></li>")
+                          } else {
+                             $('#literature_selected_display').append(
+                               "<li style='color:black'><span class='refEditText'>"
+                                    + r +
+                               "</span><span class='refEditButton'>[Edit]</span></li>")
+                       }
+                     }else{
+                         if (u && u!='None' && u!='') {
                            $('#literature_selected_display').append(
-                             "<li style='color:black'><span class='refEditText'>"
-                                  + r +
-                             "</span><span class='refEditButton'>[Edit]</span></li>")
-                     }
-                });
-           },
+                           "<li style='color:blue'><span class='refEditTextHit'>"
+                             + r)
+                           } else if (f && f!='None' && f!='') {
+                             $('#literature_selected_display').append(
+                             "<li style='color:blue'><span class='refEditTextHit'>"
+                               + r)
+                             } else {
+                               $('#literature_selected_display').append(
+                               "<li style='color:black'><span class='refEditText'>"
+                                 + r)
+                               }
+                             }
+                           });
+                         },
             complete: function(){
                  $("#wait").hide();
 
@@ -303,7 +319,7 @@ var doAjax_districts = function() {
 // ACTIVATE EDIT BUTTONS
 //*************************************************************
 var doAjax_references_by_district = function(inputValue) {
-
+     role = '{{ROLE}}';
      $("#wait").show();
      $('#literature_selected_display').empty()
 
@@ -321,24 +337,40 @@ var doAjax_references_by_district = function(inputValue) {
                   u = object.url
                   f = object.filename
                   r = object.reference + " Ref Id = " + object.reference_id + " "
-                  if (u && u!='None' && u!='') {
-                       $('#literature_selected_display').append(
-                       "<li style='color:blue'><span class='refEditTextHit'>"
-                            + r +
-                       "</span><span class='refEditButton'>[Edit]</span></li>")
-                     } else if (f && f!='None' && f!='') {
-                        $('#literature_selected_display').append(
+                  if (role=='admin') {
+                    if (u && u!='None' && u!='') {
+                         $('#literature_selected_display').append(
                          "<li style='color:blue'><span class='refEditTextHit'>"
                               + r +
                          "</span><span class='refEditButton'>[Edit]</span></li>")
-                     } else {
-                        $('#literature_selected_display').append(
-                          "<li style='color:black'><span class='refEditText'>"
-                               + r +
-                          "</span><span class='refEditButton'>[Edit]</span></li>")
-                  }
-             });
-        },
+                       } else if (f && f!='None' && f!='') {
+                          $('#literature_selected_display').append(
+                           "<li style='color:blue'><span class='refEditTextHit'>"
+                                + r +
+                           "</span><span class='refEditButton'>[Edit]</span></li>")
+                       } else {
+                          $('#literature_selected_display').append(
+                            "<li style='color:black'><span class='refEditText'>"
+                                 + r +
+                            "</span><span class='refEditButton'>[Edit]</span></li>")
+                          }
+                        }else{
+                            if (u && u!='None' && u!='') {
+                              $('#literature_selected_display').append(
+                              "<li style='color:blue'><span class='refEditTextHit'>"
+                                + r)
+                              } else if (f && f!='None' && f!='') {
+                                $('#literature_selected_display').append(
+                                "<li style='color:blue'><span class='refEditTextHit'>"
+                                  + r)
+                                } else {
+                                  $('#literature_selected_display').append(
+                                  "<li style='color:black'><span class='refEditText'>"
+                                    + r)
+                                  }
+                                }
+                              });
+                            },
          complete: function(){
 
               $("#wait").hide();
@@ -367,7 +399,7 @@ var doAjax_references_by_district = function(inputValue) {
   // ACTIVATE EDIT BUTTONS
   //*************************************************************
   var doAjax_references_by_category = function(inputValue) {
-
+       role = '{{ROLE}}';
        $("#wait").show();
        $('#references_all_display').empty()
        $('#literature_selected_display').empty()
@@ -387,24 +419,40 @@ var doAjax_references_by_district = function(inputValue) {
                     u = object.url
                     f = object.filename
                     r = object.reference + " Ref Id = " + object.reference_id + " "
-                    if (u && u!='None' && u!='') {
-                         $('#literature_selected_display').append(
-                         "<li style='color:blue'><span class='refEditTextHit'>"
-                              + r +
-                         "</span><span class='refEditButton'>[Edit]</span></li>")
-                       } else if (f && f!='None' && f!='') {
-                          $('#literature_selected_display').append(
+                    if (role=='admin') {
+                      if (u && u!='None' && u!='') {
+                           $('#literature_selected_display').append(
                            "<li style='color:blue'><span class='refEditTextHit'>"
                                 + r +
                            "</span><span class='refEditButton'>[Edit]</span></li>")
-                       } else {
+                         } else if (f && f!='None' && f!='') {
+                            $('#literature_selected_display').append(
+                             "<li style='color:blue'><span class='refEditTextHit'>"
+                                  + r +
+                             "</span><span class='refEditButton'>[Edit]</span></li>")
+                         } else {
+                            $('#literature_selected_display').append(
+                              "<li style='color:black'><span class='refEditText'>"
+                                   + r +
+                              "</span><span class='refEditButton'>[Edit]</span></li>")
+                      }
+                      }else{
+                        if (u && u!='None' && u!='') {
                           $('#literature_selected_display').append(
-                            "<li style='color:black'><span class='refEditText'>"
-                                 + r +
-                            "</span><span class='refEditButton'>[Edit]</span></li>")
-                    }
-               });
-          },
+                          "<li style='color:blue'><span class='refEditTextHit'>"
+                            + r)
+                          } else if (f && f!='None' && f!='') {
+                            $('#literature_selected_display').append(
+                            "<li style='color:blue'><span class='refEditTextHit'>"
+                              + r)
+                            } else {
+                              $('#literature_selected_display').append(
+                              "<li style='color:black'><span class='refEditText'>"
+                                + r)
+                              }
+                            }
+                          });
+                        },
             complete: function(){
                  $("#wait").hide();
 
@@ -432,7 +480,8 @@ var doAjax_references_by_district = function(inputValue) {
    // ACTIVATE EDIT BUTTONS
    //*************************************************************
    var doAjax_references_by_specialCollection = function(inputValue) {
-
+        role = '{{ROLE}}';
+        //console.log("ROLE: ", role);
         $("#wait").show();
         $('#references_all_display').empty()
         $('#literature_selected_display').empty()
@@ -443,31 +492,47 @@ var doAjax_references_by_district = function(inputValue) {
            //url: "http://0.0.0.0:5000/literature/references_by_specialCollection/" + inputValue,
            //url: "http://10.0.1.29:5000/literature/references_by_specialCollection/" + inputValue,
            success: function(data) {
-                $('#literature_selected_display').empty();
-                objects = JSON.parse(data.Refs)
-                $('#literature_selected_display').show();
-                $.each(objects, function(i, object) {
-                     u = object.url
-                     f = object.filename
-                     r = object.reference + " Ref Id = " + object.reference_id + " "
-                     if (u && u!='None' && u!='') {
-                          $('#literature_selected_display').append(
-                          "<li style='color:blue'><span class='refEditTextHit'>"
-                               + r +
-                          "</span><span class='refEditButton'>[Edit]</span></li>")
-                        } else if (f && f!='None' && f!='') {
+             $('#literature_selected_display').empty();
+             objects = JSON.parse(data.Refs)
+             $('#literature_selected_display').show();
+             $.each(objects, function(i, object) {
+               u = object.url
+               f = object.filename
+               r = object.reference + " Ref Id = " + object.reference_id + " "
+               if (role=='admin') {
+                 if (u && u!='None' && u!='') {
+                   $('#literature_selected_display').append(
+                   "<li style='color:blue'><span class='refEditTextHit'>"
+                     + r +
+                     "</span><span class='refEditButton'>[Edit]</span></li>")
+                   } else if (f && f!='None' && f!='') {
+                     $('#literature_selected_display').append(
+                     "<li style='color:blue'><span class='refEditTextHit'>"
+                       + r +
+                       "</span><span class='refEditButton'>[Edit]</span></li>")
+                     } else {
+                       $('#literature_selected_display').append(
+                       "<li style='color:black'><span class='refEditText'>"
+                         + r +
+                         "</span><span class='refEditButton'>[Edit]</span></li>")
+                       }
+                     }else{
+                       if (u && u!='None' && u!='') {
+                         $('#literature_selected_display').append(
+                         "<li style='color:blue'><span class='refEditTextHit'>"
+                           + r)
+                         } else if (f && f!='None' && f!='') {
                            $('#literature_selected_display').append(
-                            "<li style='color:blue'><span class='refEditTextHit'>"
-                                 + r +
-                            "</span><span class='refEditButton'>[Edit]</span></li>")
-                        } else {
-                           $('#literature_selected_display').append(
+                           "<li style='color:blue'><span class='refEditTextHit'>"
+                             + r)
+                           } else {
+                             $('#literature_selected_display').append(
                              "<li style='color:black'><span class='refEditText'>"
-                                  + r +
-                             "</span><span class='refEditButton'>[Edit]</span></li>")
-                     }
-                });
-           },
+                               + r)
+                             }
+                           }
+                         });
+                       },
              complete: function(){
                   $("#wait").hide();
 
@@ -536,11 +601,8 @@ var doAjax_get_url_pdf = function(id_ref) {
       });
 }
 
-
-
 });
 
 </script>
-
 
 {% endblock body %}

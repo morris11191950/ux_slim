@@ -32,7 +32,7 @@ def login():
     if form.validate_on_submit():
         usrData = Queries().login_checkUser(username, password)
         if usrData:
-            user = User(usrData[0], usrData[1], usrData[2], usrData[3])
+            user = User(usrData[0], usrData[1], usrData[2], usrData[3], usrData[4])
             #print('userRemember ', userRemember)
             login_user(user, remember=userRemember)
             next_page = request.args.get('next')

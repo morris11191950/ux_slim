@@ -7,18 +7,18 @@ from flask_login import UserMixin, current_user
 @login_manager.user_loader
 def load_user(user_id):
     userData = Queries().get(user_id)
-    user = User(userData[0], userData[1], userData[2], userData[3])
+    user = User(userData[0], userData[1], userData[2], userData[3], userData[4])
     return user
 
 class User(UserMixin):
 
-    def __init__(self, id, username, email, password_hash, active=True):
+    def __init__(self, id, username, email, password_hash, role, active=True):
         self.id = id
         self.username = username
         self.email = email
         self.password_hash = password_hash
+        self.role = role
         self.active = active
-
 
     def get_reset_token(self, expires_sec=1800):
         s = Serializer(current_app.config['SECRET_KEY'], expires_sec)
